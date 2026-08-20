@@ -1,0 +1,23 @@
+# Node
+node_modules/
+.next/
+out/
+.env
+.env.local
+.env*.local
+npm-debug.log*
+
+# Python
+apps/agent/__pycache__/
+apps/agent/.venv/
+apps/agent/venv/
+apps/agent/*.pyc
+apps/agent/.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
