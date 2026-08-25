@@ -1,11 +1,61 @@
+@import url("https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --base: #161616;
+  --base-tint: #1c1c1c;
+  --base-shade: #0a0a0a;
+  --base-opp: #faf7f6;
+  --base-opp-tint: #ffffff;
+  --accent: #ddf160;
+  --additional: #9f8be7;
+  --additional-rgb: 159, 139, 231;
+  --neutral-transparent: rgba(0, 0, 0, 0.3);
+  --st-bright: #ffffff;
+  --st-medium: #646464;
+  --st-muted: #252525;
+  --t-bright: #ffffff;
+  --t-medium: #acacac;
+  --t-muted: #838383;
+  --t-opp-bright: #161616;
+  --t-opp-medium: #303030;
+}
+
+:root[data-theme="light"] {
+  --base: #faf7f6;
+  --base-tint: #ffffff;
+  --base-shade: #e0dddb;
+  --base-opp: #161616;
+  --base-opp-tint: #1c1c1c;
+  --accent: #9f8be7;
+  --additional: #ddf160;
+  --additional-rgb: 221, 241, 96;
+  --neutral-transparent: rgba(255, 255, 255, 0.3);
+  --st-bright: #161616;
+  --st-medium: #7c7c7c;
+  --st-muted: #e0dddb;
+  --t-bright: #161616;
+  --t-medium: #303030;
+  --t-muted: #585858;
+  --t-opp-bright: #ffffff;
+  --t-opp-medium: #acacac;
+}
 
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  @apply bg-neutral-950 text-neutral-100;
+  background-color: var(--base);
+  color: var(--t-bright);
+  font-family: "Funnel Sans", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.font-accent {
+  font-family: "Funnel Display", sans-serif;
 }

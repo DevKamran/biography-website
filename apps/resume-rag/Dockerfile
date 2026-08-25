@@ -1,0 +1,15 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000
+
+# Ingestion is a one-off step (run once per resume update, not on every
+# query) — run it manually before/after deploying, e.g.:
+#   docker run --rm --env-file .env resume-rag python ingest.py --file data/sample_resume.md
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,35 +1,139 @@
 {
   "profile": {
-    "name": "Your Name",
-    "title": "Full Stack Developer",
+    "name": "Kamran Ali",
+    "title": "Senior UI/UX Engineer",
     "location": "Karachi, Pakistan",
-    "bio": "TODO: 2-4 sentences about who you are, what you do, and what you're looking for.",
-    "email": "you@example.com",
-    "github": "https://github.com/yourhandle",
-    "linkedin": "https://linkedin.com/in/yourhandle"
+    "bio": "Senior UI/UX Engineer with 7+ years of experience owning end-to-end frontend development and UI design across enterprise SaaS platforms, AI-powered products, and high-traffic web applications. Currently building Goalytics, an AI-powered OKR platform, at Digital Gravity. Expert hand-coder of HTML5, CSS3/SCSS, and pixel-perfect React.js interfaces translated directly from Figma, with a daily AI-assisted development workflow (Claude, GitHub Copilot, Cursor).",
+    "email": "kamranali06022026@gmail.com",
+    "phone": "+92-312-2497222",
+    "github": "https://github.com/kamranali",
+    "linkedin": "https://linkedin.com/in/kamranali"
   },
-  "skills": ["TypeScript", "React", "Next.js", "Python", "Node.js"],
+  "skills": [
+    "HTML5",
+    "CSS3/SCSS",
+    "JavaScript (ES6+)",
+    "TypeScript",
+    "React.js",
+    "Next.js",
+    "Vue.js",
+    "Angular",
+    "Tailwind CSS",
+    "Bootstrap",
+    "Socket.io",
+    "WebSockets",
+    "Redux Toolkit",
+    "Zustand",
+    "REST APIs",
+    "GraphQL",
+    "Figma (design-to-code)",
+    "Jest",
+    "React Testing Library",
+    "Webpack",
+    "Vite",
+    "Docker",
+    "AWS",
+    "Vercel",
+    "GitHub Actions",
+    "WCAG Accessibility",
+    "Claude API / AI-Assisted Workflows"
+  ],
   "projects": [
     {
-      "name": "Project One",
-      "description": "Short description of what this project does and the problem it solves.",
-      "tech": ["Next.js", "TypeScript"],
-      "link": "https://example.com",
-      "repo": "https://github.com/yourhandle/project-one"
+      "name": "Goalytics",
+      "description": "AI-powered OKR platform (goalytics.io) — turns company strategy into aligned execution through Objectives & Key Results. Real-time collaborative Socket.io sessions where teams build goals together, Claude-powered AI suggestion workflows for goal generation and weightage balancing, role-based dashboards (Admin, Manager, Participant, Viewer), multi-step onboarding, and PDF export.",
+      "tech": ["Next.js", "TypeScript", "Socket.io", "Claude AI API", "SaaS"],
+      "link": "https://goalytics.io"
     },
     {
-      "name": "Project Two",
-      "description": "Short description of what this project does and the problem it solves.",
-      "tech": ["Python", "FastAPI"],
-      "repo": "https://github.com/yourhandle/project-two"
+      "name": "Vettio",
+      "description": "AI recruitment platform that runs structured, domain-aware video/voice interviews with every applicant and produces instant, explainable shortlists. Owned the enterprise SaaS design system end-to-end, including real-time LiveKit-driven voice interview UI managing concurrent data streams and complex async states.",
+      "tech": ["React.js", "Next.js", "TypeScript", "WebSockets", "LiveKit", "REST API"]
+    },
+    {
+      "name": "Savyour",
+      "description": "Pakistan's cashback & deals platform (savyour.io) — real-time deal discovery with cashback stacking on top of existing brand discounts across 400+ partner brands, an in-app wallet, price-drop alerts, a referral program, and a browser extension for checkout savings.",
+      "tech": ["Next.js", "React.js", "Tailwind CSS"],
+      "link": "https://savyour.io"
+    },
+    {
+      "name": "TaskQue",
+      "description": "Cloud-based task management platform for teams. Its 'Que' system automatically routes new tasks to whichever team member is actually free, with customizable Agile/Waterfall/hybrid workflows and integrations with Slack, Google Drive/Docs, and Dropbox.",
+      "tech": ["AngularJS", "TypeScript", "Bootstrap", "REST API"]
+    },
+    {
+      "name": "Rocky Run",
+      "description": "Single-page landing site built for event registration.",
+      "tech": ["HTML5", "CSS3", "JavaScript"],
+      "link": "https://rockyrun.com"
+    },
+    {
+      "name": "DesignUps",
+      "description": "Single-page landing site for a creative agency.",
+      "tech": ["HTML5", "CSS3", "JavaScript"],
+      "link": "https://designups.com"
+    },
+    {
+      "name": "AUTOFOCUS Energy",
+      "description": "Single-page e-commerce landing site for an energy drink brand.",
+      "tech": ["HTML5", "CSS3", "JavaScript"],
+      "link": "https://drinkautofocus.com"
+    },
+    {
+      "name": "WUNDERWEB Studio",
+      "description": "Single-page studio portfolio landing site.",
+      "tech": ["HTML5", "CSS3", "JavaScript"],
+      "link": "https://www.wunderwebstudio.com"
     }
   ],
   "experience": [
     {
-      "role": "Job Title",
-      "company": "Company Name",
-      "dates": "2023 — Present",
-      "description": "Brief description of responsibilities and impact."
+      "role": "Frontend Developer — Goalytics (AI OKR Platform)",
+      "company": "Digital Gravity",
+      "dates": "July 2025 — Present",
+      "description": "Building Goalytics end to end: pixel-perfect React.js UI from Figma specs, real-time multi-user Socket.io collaboration (live brainstorming, voting, commenting, presence), Claude AI-powered suggestion interfaces with review/accept/modify/reject controls, role-based UI architecture (Admin, Manager, Participant, Viewer), multi-step onboarding flows, and REST API integration with backend engineers."
+    },
+    {
+      "role": "Senior UI/UX Engineer (Frontend Lead)",
+      "company": "Disrupt.com (Vettio)",
+      "dates": "March 2021 — June 2025",
+      "description": "Owned the UI/UX of a production enterprise SaaS platform end to end, from Figma wireframes through hand-coded, pixel-perfect React.js/Next.js implementation. Built and maintained a design system and shared component library that cut delivery time by 40%, implemented WCAG-aligned accessibility practices, built real-time LiveKit-driven voice interview features, improved Lighthouse/Core Web Vitals scores by 35%, led code reviews and mentored junior developers, and maintained CI/CD pipelines via GitHub Actions and Vercel (50% better deployment reliability)."
+    },
+    {
+      "role": "Front-End Developer",
+      "company": "Intersys Ltd",
+      "dates": "April 2019 — February 2021",
+      "description": "Built responsive, accessible web interfaces using React.js, HTML5, CSS3/SCSS, and Bootstrap, translating Figma and PSD designs into pixel-perfect, cross-browser-compatible production code. Maintained marketing-facing landing pages alongside product UI and migrated a legacy WordPress frontend to a modern React.js component architecture."
+    },
+    {
+      "role": "Front-End Developer",
+      "company": "Nanosoft",
+      "dates": "May 2018 — April 2019",
+      "description": "Built responsive, accessible UI components for TaskQue using Angular and TypeScript, integrating REST APIs and real-time data feeds with clean, W3C-standard markup in Agile sprint cycles."
+    },
+    {
+      "role": "UI Developer",
+      "company": "EFSOL Solution",
+      "dates": "March 2017 — April 2018",
+      "description": "Designed and developed responsive marketing websites and landing pages using hand-coded HTML5, CSS3, and JavaScript, translating Figma/PSD layouts into pixel-perfect, brand-consistent interfaces for design and marketing stakeholders."
     }
+  ],
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "school": "Muhammad Ali Jinnah University",
+      "location": "Karachi, Pakistan",
+      "dates": "2020 — 2022"
+    },
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Muhammad Ali Jinnah University",
+      "location": "Karachi, Pakistan",
+      "dates": "2013 — 2017"
+    }
+  ],
+  "certifications": [
+    "Microsoft MCSA — Windows Server 2012",
+    "Franklin Covey Academy — Leadership Certified"
   ]
 }

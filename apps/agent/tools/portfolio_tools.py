@@ -42,6 +42,12 @@ def get_experience() -> list:
     return _load_data()["experience"]
 
 
+def get_education() -> dict:
+    """Return education history and certifications."""
+    data = _load_data()
+    return {"education": data.get("education", []), "certifications": data.get("certifications", [])}
+
+
 # ---------------------------------------------------------------------------
 # OpenAI-style tool schema, one entry per function above.
 # Add a new entry here whenever you add a new tool function.
@@ -88,6 +94,14 @@ TOOL_SCHEMAS = [
             "parameters": {"type": "object", "properties": {}},
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_education",
+            "description": "Get the portfolio owner's education history and certifications.",
+            "parameters": {"type": "object", "properties": {}},
+        },
+    },
 ]
 
 TOOL_IMPLEMENTATIONS = {
@@ -95,4 +109,5 @@ TOOL_IMPLEMENTATIONS = {
     "get_skills": get_skills,
     "get_projects": get_projects,
     "get_experience": get_experience,
+    "get_education": get_education,
 }

@@ -1,28 +1,138 @@
-import { profile } from "@/lib/portfolio-data";
+import { ArrowDownRight, ImageIcon } from "lucide-react";
+import { profile, heroStats, heroTags } from "@/lib/portfolio-data";
+
+function HeroPortrait() {
+  return (
+    <div className="relative mx-auto aspect-square w-[280px] sm:w-[340px] hero:w-[380px] hero-lg:w-[440px]">
+      {/* decorative blob — swap this whole component for <Image src="/img/hero/your-photo.png" .../> later */}
+      <div
+        className="absolute inset-[6%] rounded-full blur-2xl"
+        style={{ backgroundColor: "var(--additional)", opacity: 0.55 }}
+      />
+      <div
+        className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-full border-2 border-dashed"
+        style={{ borderColor: "var(--st-medium)", color: "var(--t-muted)" }}
+      >
+        <ImageIcon size={40} strokeWidth={1.5} />
+        <span className="font-accent text-sm">Your photo goes here</span>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({
+  value,
+  label,
+  className = "",
+}: {
+  value: string;
+  label: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`flex items-center gap-4 rounded-2xl border px-5 py-4 backdrop-blur-md ${className}`}
+      style={{
+        backgroundColor: "var(--neutral-transparent)",
+        borderColor: "var(--neutral-transparent)",
+        boxShadow: "0px 4px 8px 0px rgba(var(--additional-rgb), 0.3)",
+      }}
+    >
+      <p
+        className="font-accent text-[44px] font-medium leading-[0.8] tracking-tight sm:text-[50px]"
+        style={{ color: "var(--t-bright)" }}
+      >
+        {value}
+      </p>
+      <p
+        className="w-[140px] whitespace-pre-line text-sm leading-snug sm:w-40 sm:text-[15px]"
+        style={{ color: "var(--t-bright)" }}
+      >
+        {label}
+      </p>
+    </div>
+  );
+}
+
+function OpenToWork() {
+  return (
+    <div
+      className="inline-flex items-center gap-3 self-center rounded-full border px-5 py-3 font-accent text-sm sm:text-base hero:absolute hero:-bottom-4 hero:left-1/2 hero:-translate-x-1/2"
+      style={{
+        backgroundColor: "var(--neutral-transparent)",
+        borderColor: "var(--neutral-transparent)",
+        color: "var(--t-bright)",
+      }}
+    >
+      <span className="h-[10px] w-[10px] shrink-0 rounded-full" style={{ backgroundColor: "#a1f21e" }} />
+      I&apos;m open to work
+    </div>
+  );
+}
 
 export default function Hero() {
   return (
-    <section id="home" className="mx-auto flex min-h-[80vh] max-w-3xl flex-col justify-center px-6">
-      <p className="text-sm uppercase tracking-widest text-blue-400">{profile.location}</p>
-      <h1 className="mt-3 text-5xl font-semibold tracking-tight sm:text-6xl">
-        {profile.name}
-      </h1>
-      <p className="mt-2 text-xl text-neutral-400">{profile.title}</p>
-      <p className="mt-6 max-w-xl text-neutral-300">{profile.bio}</p>
-      <div className="mt-8 flex gap-4">
-        <a
-          href="#projects"
-          className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium hover:bg-blue-500"
-        >
-          View projects
-        </a>
-        <a
-          href={profile.links.resume}
-          className="rounded-lg border border-neutral-700 px-5 py-2.5 text-sm font-medium hover:border-neutral-500"
-        >
-          Resume
-        </a>
+    <section
+      id="home"
+      className="relative w-full overflow-hidden pt-[110px] sm:pt-[148px] hero:min-h-screen hero:py-24"
+    >
+      <div className="mx-auto flex max-w-[1800px] flex-col gap-16 px-6 pb-16 sm:px-12 hero:h-full hero:flex-row hero:items-center hero:justify-between hero:gap-12 hero:px-14">
+        {/* headline */}
+        <div className="relative z-[2] hero:max-w-[640px] hero-lg:max-w-[780px]">
+          <p
+            className="mb-9 max-w-[500px] font-accent text-[20px] font-medium leading-tight sm:text-[26px]"
+            style={{ color: "var(--t-bright)" }}
+          >
+            {profile.bio}
+          </p>
+
+          <h1
+            className="select-none whitespace-nowrap font-accent text-[2.6rem] font-semibold leading-[0.85] tracking-tight xs:text-[3.4rem] sm:text-[6.5rem] md:text-[8rem] hero:text-[8.5rem] hero-lg:text-[10.5rem]"
+            style={{ color: "var(--t-bright)" }}
+          >
+            {profile.name.toLowerCase()}
+          </h1>
+
+          <div className="mt-10 flex flex-wrap gap-2">
+            {heroTags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex h-8 items-center rounded-full border px-4 font-accent text-sm transition-colors sm:h-9 sm:text-base"
+                style={{ borderColor: "var(--st-bright)", color: "var(--t-bright)" }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* portrait + floating stats */}
+        <div className="relative z-[1] mx-auto flex w-full max-w-[380px] shrink-0 flex-col items-center gap-4 hero:mx-0 hero:block hero:w-auto hero:max-w-none">
+          <HeroPortrait />
+
+          <StatCard
+            value={heroStats[1].value}
+            label={heroStats[1].label}
+            className="hero:absolute hero:-left-16 hero:top-[20%]"
+          />
+          <StatCard
+            value={heroStats[0].value}
+            label={heroStats[0].label}
+            className="hero:absolute hero:-right-8 hero:bottom-[22%]"
+          />
+
+          <OpenToWork />
+        </div>
       </div>
+
+      <a
+        href="#projects"
+        className="absolute bottom-24 right-14 z-[3] hidden items-center gap-2 font-accent text-lg font-medium transition-opacity hover:opacity-70 hero:inline-flex"
+        style={{ color: "var(--t-bright)" }}
+      >
+        Scroll for more
+        <ArrowDownRight size={20} />
+      </a>
     </section>
   );
 }
