@@ -1,3 +1,4 @@
+import SiteHeader from "./components/layout/SiteHeader";
 import Hero from "./components/sections/Hero";
 import Skills from "./components/sections/Skills";
 import Projects from "./components/sections/Projects";
@@ -8,6 +9,7 @@ import ChatWidget from "./components/chat/ChatWidget";
 export default function Home() {
   return (
     <main>
+      <SiteHeader />
       <Hero />
       <Skills />
       <Projects />

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-// TODO: replace with your name / title
 export const metadata: Metadata = {
-  title: "Your Name — Portfolio",
-  description: "Portfolio site with an interactive AI chat, powered by LiveKit.",
+  title: "Kamran Ali | Senior UI/UX Engineer",
+  description:
+    "Kamran Ali is a Senior UI/UX Engineer with 7+ years building enterprise SaaS and AI-powered products, hand-coding pixel-perfect React.js interfaces from Figma.",
 };
 
 export default function RootLayout({
