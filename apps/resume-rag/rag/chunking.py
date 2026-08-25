@@ -9,6 +9,8 @@ from llama_index.core.schema import TextNode
 
 KNOWN_RESUME_HEADERS = [
     "summary",
+    "professional summary",
+    "career summary",
     "objective",
     "experience",
     "work experience",
@@ -16,7 +18,9 @@ KNOWN_RESUME_HEADERS = [
     "education",
     "skills",
     "technical skills",
+    "core competencies",
     "projects",
+    "key projects",
     "certifications",
     "awards",
     "publications",
@@ -29,16 +33,42 @@ _KNOWN_HEADER_RE = re.compile(
     re.IGNORECASE,
 )
 
+_MONTHS = (
+    "(?:January|February|March|April|May|June|July|August|September|October|"
+    "November|December)"
+)
+# Matches a job/education entry's trailing date range, e.g. "July 2025 –
+# Present", "March 2021 – June 2025", "2020 – 2022". PDF text extraction
+# usually collapses the title/company/date into one line per entry with no
+# separating whitespace (e.g. "DeveloperApril 2019 – February 2021"), so the
+# whole line — title and date together — becomes the entry's H3 header text.
+_ENTRY_DATE_RANGE_RE = re.compile(
+    rf"(?:{_MONTHS}\s+)?\d{{4}}\s*[–—-]\s*(?:(?:{_MONTHS}\s+)?\d{{4}}|Present)\s*$",
+    re.IGNORECASE,
+)
+
+
+def _looks_like_entry_header(line: str) -> bool:
+    """Detect a job/education entry line (title + company/dates) so it can
+    be promoted to its own H3 sub-heading, tying bullets under it to the
+    specific role/degree rather than the whole section."""
+    if not line or len(line) > 160:
+        return False
+    if line.lstrip()[:1] in ("-", "–", "—", "•", "*"):
+        return False  # bullet line, not an entry header
+    return bool(_ENTRY_DATE_RANGE_RE.search(line))
+
 
 def pdf_text_to_pseudo_markdown(text: str) -> str:
     """Turn raw PDF-extracted text into pseudo-Markdown so the same
     structural (header-based) chunking logic can be reused for PDFs.
 
-    Prefixes the first non-blank line as the H1 title, and any subsequent
-    line that matches a known resume section name (or is a short ALL-CAPS
-    line) as an H2 header. This is a heuristic — real-world resumes vary a
-    lot in formatting, so expect to tune KNOWN_RESUME_HEADERS once you have
-    your actual resume PDF.
+    Prefixes the first non-blank line as the H1 title, any subsequent line
+    that matches a known resume section name (or is a short ALL-CAPS line)
+    as an H2 header, and any line that looks like a job/education entry
+    (ends in a date range) as an H3 sub-header. This is a heuristic —
+    real-world resumes vary a lot in formatting, so expect to tune
+    KNOWN_RESUME_HEADERS / _looks_like_entry_header for other resumes.
     """
     lines = text.splitlines()
     out: list[str] = []
@@ -61,6 +91,8 @@ def pdf_text_to_pseudo_markdown(text: str) -> str:
         )
         if is_known_header or is_allcaps_header:
             out.append(f"## {stripped}")
+        elif _looks_like_entry_header(stripped):
+            out.append(f"### {stripped}")
         else:
             out.append(line)
 
@@ -93,13 +125,23 @@ def derive_section_role(node: TextNode, separator: str = "/") -> None:
     header_match = re.match(r"^#+\s+(.*)", node.text.strip())
     own_header_text = header_match.group(1).strip() if header_match else None
 
+    # header_path holds ANCESTOR headers only (never the node's own header),
+    # so path_parts[0] is always the resume's H1 title when present.
     if len(path_parts) >= 2:
+        # Node is nested under H1 > H2 (> deeper) — e.g. a specific job
+        # entry under "Work Experience". Its own header is the specific
+        # entry (role); the section is the first header below the title.
         section = path_parts[1]
         role = own_header_text
     elif len(path_parts) == 1:
-        section = path_parts[0]
+        # Node's own header sits directly under H1 with no further
+        # nesting — it IS a top-level section (e.g. "Technical Skills"),
+        # so use its own header text, not the H1 title in path_parts[0].
+        section = own_header_text or path_parts[0]
         role = None
     else:
+        # No ancestor headers at all — preamble/contact info before any
+        # section header (typically merged with the H1 node itself).
         section = "General"
         role = None
 

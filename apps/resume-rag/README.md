@@ -31,15 +31,15 @@ request path. It embeds the resume's chunks and upserts them into Qdrant
 (auto-creating the collection on first run).
 
 ```bash
-python ingest.py --file data/sample_resume.md --document "Jordan_Rivera_Resume"
+python ingest.py --file data/KamranAli_Resume.pdf --document "KamranAli_Resume"
 ```
 
 - `--file` accepts `.md` or `.pdf`.
 - `--document` tags every chunk so re-ingesting the same document replaces
   its old chunks instead of duplicating them.
 
-Replace `data/sample_resume.md` with your own resume (Markdown or PDF) and
-re-run the command above whenever it changes.
+To update the resume, replace `data/KamranAli_Resume.pdf` and re-run the
+command above.
 
 ## Run the API locally
 
@@ -52,7 +52,7 @@ uvicorn main:app --reload --port 8000
 ```bash
 curl -s -X POST http://localhost:8000/query \
   -H "Content-Type: application/json" \
-  -d '{"question": "What did the candidate do at Example Corp?"}'
+  -d '{"question": "What UI/UX engineering experience does the candidate have?"}'
 ```
 
 Guardrail check — this should get an "I don't know" style answer, not an

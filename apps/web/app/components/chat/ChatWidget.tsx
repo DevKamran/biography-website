@@ -1,17 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useLiveKitChat } from "@/lib/use-livekit-chat";
+import { useResumeChat } from "@/lib/use-resume-chat";
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const { connect, sendMessage, messages, status, agentPresent } = useLiveKitChat();
+  const { sendMessage, messages, sending } = useResumeChat();
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (open && status === "idle") connect();
-  }, [open, status, connect]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -31,10 +27,7 @@ export default function ChatWidget() {
             <div>
               <p className="text-sm font-medium">Ask about me</p>
               <p className="text-xs text-neutral-500">
-                {status === "connecting" && "Connecting…"}
-                {status === "connected" && !agentPresent && "Waiting for assistant…"}
-                {status === "connected" && agentPresent && "Online"}
-                {status === "error" && "Connection failed"}
+                {sending ? "Thinking…" : "AI resume assistant"}
               </p>
             </div>
             <button

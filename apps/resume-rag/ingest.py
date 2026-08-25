@@ -39,7 +39,7 @@ def delete_existing_document_chunks(client, collection_name: str, document_name:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Ingest a resume into the Qdrant vector store.")
-    parser.add_argument("--file", default="data/sample_resume.md", help="Path to the resume file (.md or .pdf)")
+    parser.add_argument("--file", default="data/KamranAli_Resume.pdf", help="Path to the resume file (.md or .pdf)")
     parser.add_argument("--document", default=None, help="Document name used to tag chunks (default: file stem)")
     parser.add_argument("--collection", default=None, help="Override QDRANT_COLLECTION_NAME")
     args = parser.parse_args()
