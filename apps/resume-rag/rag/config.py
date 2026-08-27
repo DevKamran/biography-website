@@ -35,7 +35,7 @@ def load_settings(collection_override: str | None = None) -> Settings:
 
     return Settings(
         gemini_api_key=gemini_api_key,
-        gemini_llm_model=os.environ.get("GEMINI_LLM_MODEL", "gemini-3.6-flash"),
+        gemini_llm_model=os.environ.get("GEMINI_LLM_MODEL", "gemini-3.5-flash-lite"),
         gemini_embed_model=os.environ.get("GEMINI_EMBED_MODEL", "gemini-embedding-2-preview"),
         qdrant_url=qdrant_url,
         qdrant_api_key=os.environ.get("QDRANT_API_KEY", ""),
