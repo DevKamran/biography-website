@@ -19,10 +19,7 @@ export const profile = {
   },
 };
 
-export const heroStats = [
-  { value: "7+", label: "Years of\nexperience" },
-  { value: "8+", label: "Products\nshipped" },
-];
+export const heroStats = [{ value: "7+", label: "Years of\nexperience" }];
 
 export const heroTags: string[] = [
   "React.js",

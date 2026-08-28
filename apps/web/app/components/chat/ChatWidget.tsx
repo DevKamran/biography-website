@@ -129,12 +129,14 @@ export default function ChatWidget() {
         </div>
       )}
 
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="rounded-full bg-blue-600 px-5 py-3 text-sm font-medium shadow-lg hover:bg-blue-500"
-      >
-        {open ? "Close" : "💬 Chat with my AI"}
-      </button>
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="rounded-full bg-blue-600 px-5 py-3 text-sm font-medium shadow-lg hover:bg-blue-500"
+        >
+          💬 Chat with my AI
+        </button>
+      )}
     </div>
   );
 }

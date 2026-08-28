@@ -1,21 +1,22 @@
-import { ArrowDownRight, ImageIcon } from "lucide-react";
+import Image from "next/image";
+import { ArrowDownRight } from "lucide-react";
 import { profile, heroStats, heroTags } from "@/lib/portfolio-data";
 
 function HeroPortrait() {
   return (
     <div className="relative mx-auto aspect-square w-[280px] sm:w-[340px] hero:w-[380px] hero-lg:w-[440px]">
-      {/* decorative blob — swap this whole component for <Image src="/img/hero/your-photo.png" .../> later */}
       <div
         className="absolute inset-[6%] rounded-full blur-2xl"
         style={{ backgroundColor: "var(--additional)", opacity: 0.55 }}
       />
-      <div
-        className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-full border-2 border-dashed"
-        style={{ borderColor: "var(--st-medium)", color: "var(--t-muted)" }}
-      >
-        <ImageIcon size={40} strokeWidth={1.5} />
-        <span className="font-accent text-sm">Your photo goes here</span>
-      </div>
+      <Image
+        src="/img/profile.jpeg"
+        alt={profile.name}
+        fill
+        priority
+        sizes="(min-width: 1600px) 440px, (min-width: 1200px) 380px, (min-width: 640px) 340px, 280px"
+        className="relative rounded-full object-cover"
+      />
     </div>
   );
 }
@@ -87,10 +88,10 @@ export default function Hero() {
           </p>
 
           <h1
-            className="select-none whitespace-nowrap font-accent text-[2.6rem] font-semibold leading-[0.85] tracking-tight xs:text-[3.4rem] sm:text-[6.5rem] md:text-[8rem] hero:text-[8.5rem] hero-lg:text-[10.5rem]"
+            className="select-none whitespace-nowrap font-accent  text-[2.6rem] font-semibold leading-[0.85] tracking-tight xs:text-[3.4rem] sm:text-[6.5rem] md:text-[8rem] hero:text-[8.5rem] hero-lg:text-[10.5rem]"
             style={{ color: "var(--t-bright)" }}
           >
-            {profile.name.toLowerCase()}
+            {profile.name}
           </h1>
 
           <div className="mt-10 flex flex-wrap gap-2">
@@ -110,11 +111,6 @@ export default function Hero() {
         <div className="relative z-[1] mx-auto flex w-full max-w-[380px] shrink-0 flex-col items-center gap-4 hero:mx-0 hero:block hero:w-auto hero:max-w-none">
           <HeroPortrait />
 
-          <StatCard
-            value={heroStats[1].value}
-            label={heroStats[1].label}
-            className="hero:absolute hero:-left-16 hero:top-[20%]"
-          />
           <StatCard
             value={heroStats[0].value}
             label={heroStats[0].label}
