@@ -22,7 +22,7 @@
   --t-medium: #acacac;
   --t-muted: #838383;
   --t-opp-bright: #161616;
-  --t-opp-medium: #303030;
+  --t-opp-medium: #303030; 
 }
 
 :root[data-theme="light"] {
