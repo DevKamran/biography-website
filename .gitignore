@@ -13,11 +13,11 @@ apps/agent/.venv/
 apps/agent/venv/
 apps/agent/*.pyc
 apps/agent/.env
-apps/resume-rag/__pycache__/
-apps/resume-rag/.venv/
-apps/resume-rag/venv/
-apps/resume-rag/*.pyc
-apps/resume-rag/.env
+apps/agent/__pycache__/
+apps/agent/.venv/
+apps/agent/venv/
+apps/agent/*.pyc
+apps/agent/.env
 
 # OS
 .DS_Store

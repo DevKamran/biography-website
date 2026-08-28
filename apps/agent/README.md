@@ -1,4 +1,4 @@
-# resume-rag
+# agent
 
 A Retrieval-Augmented Generation (RAG) API for querying a resume, built with
 LlamaIndex, Qdrant (vector database), Google Gemini (LLM + embeddings), and
@@ -13,7 +13,7 @@ the resume, the assistant says it doesn't know instead of inventing details.
 Requires Python >= 3.9.
 
 ```bash
-cd apps/resume-rag
+cd apps/agent
 python -m venv venv
 source venv/bin/activate      # on Windows: venv\Scripts\activate
 pip install -r requirements.txt
@@ -67,7 +67,7 @@ curl -s -X POST http://localhost:8000/query \
 ## Deployment (Railway / Render)
 
 1. Push this repo to GitHub.
-2. Create a new service pointing at `apps/resume-rag` (build context/root
+2. Create a new service pointing at `apps/agent` (build context/root
    directory), building from the included `Dockerfile`.
 3. Set env vars in the platform dashboard: `GEMINI_API_KEY`,
    `GEMINI_LLM_MODEL`, `GEMINI_EMBED_MODEL`, `QDRANT_URL`, `QDRANT_API_KEY`,

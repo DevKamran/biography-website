@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({ question }),
     });
   } catch (err) {
-    console.error("Failed to reach resume-rag backend:", err);
+    console.error("Failed to reach agent backend:", err);
     return NextResponse.json(
       { error: `Resume RAG backend is not reachable. Is it running on ${baseUrl}?` },
       { status: 502 }
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
   if (!res.ok) {
     const detail = await res.text().catch(() => "");
-    console.error("resume-rag backend returned an error:", res.status, detail);
+    console.error("agent backend returned an error:", res.status, detail);
     return NextResponse.json(
       { error: "Resume RAG backend returned an error." },
       { status: res.status }
