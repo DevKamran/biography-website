@@ -25,6 +25,7 @@ export function useResumeChat() {
     setError(null);
 
     try {
+      console.log("Calling resume chat API:", "/api/resume-query");
       const res = await fetch("/api/resume-query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

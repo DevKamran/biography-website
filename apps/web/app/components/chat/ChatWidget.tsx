@@ -15,6 +15,7 @@ export default function ChatWidget() {
 
   const handleSend = () => {
     if (!input.trim()) return;
+    console.log("ChatWidget: sending message to", "/api/resume-query");
     sendMessage(input);
     setInput("");
   };
