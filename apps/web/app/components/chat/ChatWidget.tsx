@@ -1,7 +1,58 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useResumeChat } from "@/lib/use-resume-chat";
+
+function renderBold(text: string) {
+  return text.split(/(\*\*.*?\*\*)/g).map((part, i) =>
+    part.startsWith("**") && part.endsWith("**") ? (
+      <strong key={i}>{part.slice(2, -2)}</strong>
+    ) : (
+      <Fragment key={i}>{part}</Fragment>
+    )
+  );
+}
+
+const BULLET_RE = /^[*-]\s+/;
+
+function FormattedMessage({ text }: { text: string }) {
+  // The backend sometimes runs bullets together on one line (e.g. "intro: * item * item")
+  // instead of separating them with newlines, so split those out first.
+  const normalized = text.replace(/\s(?=[*-]\s+\*\*)/g, "\n");
+  const lines = normalized.split("\n").filter((line) => line.trim() !== "");
+
+  const blocks: { type: "p" | "ul"; lines: string[] }[] = [];
+  for (const line of lines) {
+    const isBullet = BULLET_RE.test(line.trim());
+    const last = blocks[blocks.length - 1];
+    const type = isBullet ? "ul" : "p";
+    if (last && last.type === type) {
+      last.lines.push(line);
+    } else {
+      blocks.push({ type, lines: [line] });
+    }
+  }
+
+  return (
+    <>
+      {blocks.map((block, i) =>
+        block.type === "ul" ? (
+          <ul key={i} className={`list-disc space-y-1 pl-4 ${i > 0 ? "mt-2" : ""}`}>
+            {block.lines.map((line, j) => (
+              <li key={j}>{renderBold(line.trim().replace(BULLET_RE, ""))}</li>
+            ))}
+          </ul>
+        ) : (
+          block.lines.map((line, j) => (
+            <p key={`${i}-${j}`} className={i > 0 || j > 0 ? "mt-2" : undefined}>
+              {renderBold(line)}
+            </p>
+          ))
+        )
+      )}
+    </>
+  );
+}
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
@@ -55,7 +106,7 @@ export default function ChatWidget() {
                     : "bg-neutral-800 text-neutral-100"
                 }`}
               >
-                {m.text}
+                {m.from === "agent" ? <FormattedMessage text={m.text} /> : m.text}
               </div>
             ))}
           </div>
