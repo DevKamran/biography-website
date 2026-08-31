@@ -9,11 +9,11 @@ export default function CTA() {
   const containerRef = useScrollReveal<HTMLDivElement>("[data-reveal]", { y: 24, stagger: 0.06 });
 
   return (
-    <section id="cta" className="px-6 py-16 sm:px-12 lg:px-14" style={{ backgroundColor: "var(--color-bg-surface)" }}>
+    <section id="cta" className="px-6 py-16 sm:px-12 lg:px-14" style={{ backgroundColor: "url('/img/CTA_Card_background_only.png')" }}>
       <div
         ref={containerRef}
         className="relative mx-auto flex max-w-[1728px] flex-col items-center overflow-hidden rounded-[32px] px-6 py-20 text-center sm:px-12 sm:py-28"
-        style={{ backgroundColor: "var(--color-bg-inverse)" }}
+          style={{ background: "url('/img/CTA_Card_background_only.png')" }}
       >
         <div data-reveal>
           <StatusBadge label={cta.badge} />

@@ -1,7 +1,7 @@
 export default function StatusBadge({ label, live = true }: { label: string; live?: boolean }) {
   return (
     <span
-      className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono-label text-xs uppercase tracking-wider"
+      className="inline-flex items-center gap-2 bg-black rounded-full border px-4 py-1.5 font-mono-label text-xs uppercase tracking-wider"
       style={{
         borderColor: "var(--color-border-default)",
         color: "var(--color-text-secondary)",

@@ -20,7 +20,7 @@ function Card({
 
 function ContactRow({ children }: { children: React.ReactNode }) {
   return (
-    <Card className="flex items-center gap-3">
+    <Card className="flex flex-1 items-center gap-3 self-stretch">
       <Sparkle size={16} style={{ color: "var(--color-icon-accent)" }} />
       {children}
     </Card>
@@ -57,25 +57,27 @@ export default function Footer() {
             ))}
           </Card>
 
-          <div data-reveal className="flex flex-col gap-4">
-            <ContactRow>
-              <a
-                href={`mailto:${profile.email}`}
-                className="font-sans text-sm transition-opacity hover:opacity-70 sm:text-base"
-                style={{ color: "var(--color-text-secondary)" }}
-              >
-                {profile.email}
-              </a>
-            </ContactRow>
-            <ContactRow>
-              <a
-                href={`tel:${profile.phone.replace(/\s+/g, "")}`}
-                className="font-sans text-sm transition-opacity hover:opacity-70 sm:text-base"
-                style={{ color: "var(--color-text-secondary)" }}
-              >
-                {profile.phone}
-              </a>
-            </ContactRow>
+          <div data-reveal className="flex h-full flex-col gap-4">
+            <div className="flex h-full flex-col gap-4">
+              <ContactRow>
+                <a
+                  href={`mailto:${profile.email}`}
+                  className="font-sans text-sm transition-opacity hover:opacity-70 sm:text-base"
+                  style={{ color: "var(--color-text-secondary)" }}
+                >
+                  {profile.email}
+                </a>
+              </ContactRow>
+              <ContactRow>
+                <a
+                  href={`tel:${profile.phone.replace(/\s+/g, "")}`}
+                  className="font-sans text-sm transition-opacity hover:opacity-70 sm:text-base"
+                  style={{ color: "var(--color-text-secondary)" }}
+                >
+                  {profile.phone}
+                </a>
+              </ContactRow>
+            </div>
           </div>
 
           <Card data-reveal className="flex flex-col gap-3">
