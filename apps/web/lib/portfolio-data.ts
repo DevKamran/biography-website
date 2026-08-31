@@ -116,8 +116,9 @@ export const selectedWork: SelectedWorkItem[] = [
       "Real-time collaborative OKR sessions with live presence and simultaneous editing, plus Claude-powered suggestion interfaces where participants review, accept or reject every AI output before it lands.",
     tags: ["React.js", "Socket.io", "Claude API"],
     stats: ["4 role-based UI layers", "100% hand-coded from Figma"],
-    gradient: ["#1fb6e8", "#0a3a52"],
-    image: "/img/companies/goalytics_ai_cover.jpeg",
+    gradient: ["#1fb6e8", "#0a0e14"],
+    image: "/img/companies/goalytics_banner.png",
+   
   },
   {
     slug: "vettio",
@@ -127,8 +128,8 @@ export const selectedWork: SelectedWorkItem[] = [
       "Owned the frontend end to end — Figma wireframes through pixel-perfect React and Next.js — and built the shared component library that kept product and marketing surfaces consistent.",
     tags: ["Next.js", "TypeScript", "LiveKit"],
     stats: ["40% faster delivery", "35% Core Web Vitals gain"],
-    gradient: ["#f5a623", "#4a2e05"],
-    image: "/img/companies/vettio.jpeg",
+    gradient: ["#f5a623", "#F99E1C"],
+    image: "/img/companies/vettio_banner.png",
   },
   {
     slug: "savyour",
@@ -138,7 +139,7 @@ export const selectedWork: SelectedWorkItem[] = [
       "Owned both product UI and marketing landing pages on a high-traffic consumer platform, with SSR-based performance and brand-consistent UI across every surface.",
     tags: ["Next.js", "Vue.js", "SCSS"],
     stats: ["SSR performance-first rendering", "2 surfaces owned solo"],
-    gradient: ["#22c55e", "#0d3320"],
+    gradient: ["#22c55e", "#E61C22"],
     image: "/img/companies/savyour.jpeg",
   },
   {
@@ -149,7 +150,7 @@ export const selectedWork: SelectedWorkItem[] = [
       "Accessible, cross-browser enterprise SPA with clean semantic markup, real-time API integration and role-based UI architecture built to W3C standards.",
     tags: ["Angular", "TypeScript", "REST API"],
     stats: ["WCAG aligned throughout", "4 permission-scoped views"],
-    gradient: ["#8a8f98", "#1c1d20"],
+    gradient: ["#8a8f98", "#ed7d3d"],
     image: "/img/companies/taskque.png",
   },
 ];
