@@ -106,7 +106,7 @@ export default function Hero() {
     <section
       ref={rootRef}
       id="home"
-      className="relative w-full overflow-hidden pt-32 pb-16 sm:pt-40 hero:min-h-screen hero:pb-24 hero:pt-48"
+      className="relative w-full overflow-hidden pt-32 pb-16 sm:pt-40 hero:min-h-[90vh] hero:pb-24 hero:pt-48"
       style={{ backgroundColor: "var(--color-bg-surface)" }}
     >
       <div className="mx-auto flex w-full max-w-[1728px] flex-col px-6 sm:px-12 hero:px-14">
@@ -151,10 +151,10 @@ export default function Hero() {
       <a
         href="#trust"
         className="absolute bottom-10 right-8 z-[3] hidden items-center gap-2 font-mono-label text-sm transition-opacity hover:opacity-70 hero:inline-flex"
-        style={{ color: "var(--color-text-tertiary)" }}
+        style={{ color: "white" }}
       >
         Scroll for more
-        <ArrowDown size={16} />
+        <ArrowDown color="#22b8e8" size={20} />
       </a>
     </section>
   );

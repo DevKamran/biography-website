@@ -27,18 +27,18 @@ export const heroStats = [
 ];
 
 export const heroTags: string[] = [
+  "JavaScript",
   "React.js",
   "Next.js",
   "TypeScript",
+  "Vue.js",
+  "Angular",
   "Socket.io",
   "SCSS",
   "Tailwind",
-  "Claude API",
   "Design Systems",
   "Accessibility",
   "Performance",
-  "Vue.js",
-  "Angular",
 ];
 
 export const navLinks = [
