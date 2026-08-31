@@ -10,32 +10,32 @@ function MarqueeRow({ label, tags }: { label: string; tags: string[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
 
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) return;
+  // useEffect(() => {
+  //   const track = trackRef.current;
+  //   if (!track) return;
+  //   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  //   if (reduceMotion) return;
 
-    tweenRef.current = gsap.to(track, {
-      xPercent: -50,
-      duration: 30,
-      ease: "none",
-      repeat: -1,
-    });
+  //   tweenRef.current = gsap.to(track, {
+  //     xPercent: -50,
+  //     duration: 30,
+  //     ease: "none",
+  //     repeat: -1,
+  //   });
 
-    return () => {
-      tweenRef.current?.kill();
-    };
-  }, []);
+  //   return () => {
+  //     tweenRef.current?.kill();
+  //   };
+  // }, []);
 
   return (
     <div
       className="js-marquee flex flex-col gap-3 border-b py-5 sm:flex-row sm:items-center sm:gap-6"
       style={{ borderColor: "var(--color-border-subtle)" }}
-      onMouseEnter={() => tweenRef.current?.pause()}
-      onMouseLeave={() => tweenRef.current?.play()}
-      onFocus={() => tweenRef.current?.pause()}
-      onBlur={() => tweenRef.current?.play()}
+      // onMouseEnter={() => tweenRef.current?.pause()}
+      // onMouseLeave={() => tweenRef.current?.play()}
+      // onFocus={() => tweenRef.current?.pause()}
+      // onBlur={() => tweenRef.current?.play()}
     >
       <p
         className="w-full shrink-0 font-mono-label text-[11px] uppercase tracking-widest sm:w-40"

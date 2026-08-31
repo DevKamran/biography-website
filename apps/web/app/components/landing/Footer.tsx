@@ -111,7 +111,7 @@ export default function Footer() {
 
         <p
           data-reveal
-          className="select-none font-accent text-[15vw] font-extrabold leading-[0.85] tracking-tight sm:text-[11vw] lg:text-[9.5rem]"
+          className="select-none font-accent text-[15vw] font-extrabold leading-[0.85] tracking-tight text-center sm:text-[11vw] lg:text-[15rem]"
           style={{ color: "var(--color-text-primary)" }}
         >
           {profile.name}

@@ -121,7 +121,7 @@ export default function Hero() {
         {/* name + overlapping portrait cluster (hero breakpoint and up) */}
         <div data-hero-line className="relative">
           <h1
-            className="relative z-[1] select-none whitespace-nowrap font-accent text-[3rem] font-extrabold leading-[0.9] tracking-tight xs:text-[3.6rem] sm:text-[6rem] md:text-[7.5rem] hero:text-[8rem] hero-lg:text-[10rem]"
+            className="relative z-50 select-none whitespace-nowrap font-accent text-[3rem] font-extrabold leading-[0.9] tracking-tight xs:text-[3.6rem] sm:text-[6rem] md:text-[7.5rem] hero:text-[8rem] hero-lg:text-[17rem]"
             style={{ color: "var(--color-text-primary)" }}
           >
             {profile.name}
@@ -135,7 +135,7 @@ export default function Hero() {
           <PortraitCluster />
         </div>
 
-        <div data-hero-line className="mt-14 flex flex-wrap gap-2 hero:mt-8">
+        <div data-hero-line className="mt-14 flex max-w-[800px] flex-wrap gap-2 hero:mt-8">
           {heroTags.map((tag) => (
             <span
               key={tag}
