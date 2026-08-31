@@ -104,6 +104,7 @@ export type SelectedWorkItem = {
   tags: string[];
   stats: [string, string];
   gradient: [string, string];
+  image: string;
 };
 
 export const selectedWork: SelectedWorkItem[] = [
@@ -116,6 +117,7 @@ export const selectedWork: SelectedWorkItem[] = [
     tags: ["React.js", "Socket.io", "Claude API"],
     stats: ["4 role-based UI layers", "100% hand-coded from Figma"],
     gradient: ["#1fb6e8", "#0a3a52"],
+    image: "/img/companies/goalytics_ai_cover.jpeg",
   },
   {
     slug: "vettio",
@@ -126,6 +128,7 @@ export const selectedWork: SelectedWorkItem[] = [
     tags: ["Next.js", "TypeScript", "LiveKit"],
     stats: ["40% faster delivery", "35% Core Web Vitals gain"],
     gradient: ["#f5a623", "#4a2e05"],
+    image: "/img/companies/vettio.jpeg",
   },
   {
     slug: "savyour",
@@ -136,6 +139,7 @@ export const selectedWork: SelectedWorkItem[] = [
     tags: ["Next.js", "Vue.js", "SCSS"],
     stats: ["SSR performance-first rendering", "2 surfaces owned solo"],
     gradient: ["#22c55e", "#0d3320"],
+    image: "/img/companies/savyour.jpeg",
   },
   {
     slug: "taskque",
@@ -146,6 +150,7 @@ export const selectedWork: SelectedWorkItem[] = [
     tags: ["Angular", "TypeScript", "REST API"],
     stats: ["WCAG aligned throughout", "4 permission-scoped views"],
     gradient: ["#8a8f98", "#1c1d20"],
+    image: "/img/companies/taskque.png",
   },
 ];
 

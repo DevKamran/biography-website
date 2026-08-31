@@ -4,12 +4,21 @@ import { selectedWork } from "@/lib/portfolio-data";
 import { useScrollReveal } from "./ui/gsap";
 import SectionHeading from "./ui/SectionHeading";
 
+
 function ProjectCard({ item }: { item: (typeof selectedWork)[number] }) {
+  const imageUrl = typeof item.image === "string" && item.image.trim() ? item.image : "";
+
   return (
     <article data-reveal className="js-card group rounded-2xl border p-3 transition-colors duration-150 sm:p-4" style={{ borderColor: "var(--color-border-default)" }}>
       <div
         className="relative flex aspect-[4/3] w-full flex-col justify-between overflow-hidden rounded-xl p-5 sm:aspect-[16/10]"
-        style={{ background: `linear-gradient(135deg, ${item.gradient[0]}, ${item.gradient[1]})` }}
+        style={{
+          backgroundImage: imageUrl ? `url("${imageUrl}")` : "none",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundColor: "var(--color-bg-muted)",
+        }}
       >
         <p className="font-mono-label text-[11px] uppercase tracking-widest text-white/80">{item.slug}</p>
         <div className="flex flex-wrap gap-2">
