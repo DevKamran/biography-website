@@ -1,48 +1,119 @@
 @import url("https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400..700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --base: #161616;
-  --base-tint: #1c1c1c;
-  --base-shade: #0a0a0a;
-  --base-opp: #faf7f6;
-  --base-opp-tint: #ffffff;
-  --accent: #ddf160;
-  --additional: #9f8be7;
-  --additional-rgb: 159, 139, 231;
-  --neutral-transparent: rgba(0, 0, 0, 0.3);
-  --st-bright: #ffffff;
-  --st-medium: #646464;
-  --st-muted: #252525;
-  --t-bright: #ffffff;
-  --t-medium: #acacac;
-  --t-muted: #838383;
-  --t-opp-bright: #161616;
-  --t-opp-medium: #303030; 
+  /* background */
+  --color-bg-surface: #0a0a0c;
+  --color-bg-raised: #121216;
+  --color-bg-sunken: #060607;
+  --color-bg-inverse: #f7f7f5;
+  --color-bg-accent: #22b8e8;
+  --color-bg-accent-subtle: #103a49;
+  --color-bg-accent-hover: #3fc6f2;
+  --color-bg-highlight: #f5a623;
+  --color-bg-highlight-subtle: #4a3208;
+  --color-bg-overlay: #050506;
+
+  /* text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #c7c7cc;
+  --color-text-tertiary: #86868c;
+  --color-text-inverse: #0a0a0c;
+  --color-text-on-accent: #04222c;
+  --color-text-accent: #22b8e8;
+  --color-text-highlight: #f5a623;
+
+  /* border */
+  --color-border-subtle: #1d1d22;
+  --color-border-default: #2b2b32;
+  --color-border-strong: #46464f;
+  --color-border-accent: #22b8e8;
+
+  /* icon */
+  --color-icon-primary: #ffffff;
+  --color-icon-secondary: #9a9aa2;
+  --color-icon-accent: #22b8e8;
+  --color-icon-on-accent: #04222c;
+
+  /* status */
+  --color-status-live: #22c55e;
+  --color-status-success: #22c55e;
+  --color-status-error: #f87171;
+
+  color-scheme: dark;
 }
 
 :root[data-theme="light"] {
-  --base: #faf7f6;
-  --base-tint: #ffffff;
-  --base-shade: #e0dddb;
-  --base-opp: #161616;
-  --base-opp-tint: #1c1c1c;
-  --accent: #9f8be7;
-  --additional: #ddf160;
-  --additional-rgb: 221, 241, 96;
-  --neutral-transparent: rgba(255, 255, 255, 0.3);
-  --st-bright: #161616;
-  --st-medium: #7c7c7c;
-  --st-muted: #e0dddb;
-  --t-bright: #161616;
-  --t-medium: #303030;
-  --t-muted: #585858;
-  --t-opp-bright: #ffffff;
-  --t-opp-medium: #acacac;
+  --color-bg-surface: #faf9f7;
+  --color-bg-raised: #ffffff;
+  --color-bg-sunken: #eeece9;
+  --color-bg-inverse: #0a0a0c;
+  --color-bg-accent: #0f8fc2;
+  --color-bg-accent-subtle: #d8f2fb;
+  --color-bg-accent-hover: #1aa4dc;
+  --color-bg-highlight: #c97c0f;
+  --color-bg-highlight-subtle: #fbe8cc;
+  --color-bg-overlay: #ffffff;
+
+  --color-text-primary: #0a0a0c;
+  --color-text-secondary: #45454d;
+  --color-text-tertiary: #6f6f78;
+  --color-text-inverse: #ffffff;
+  --color-text-on-accent: #ffffff;
+  --color-text-accent: #0f8fc2;
+  --color-text-highlight: #c97c0f;
+
+  --color-border-subtle: #e5e3df;
+  --color-border-default: #d5d3ce;
+  --color-border-strong: #b3b1aa;
+  --color-border-accent: #0f8fc2;
+
+  --color-icon-primary: #0a0a0c;
+  --color-icon-secondary: #6f6f78;
+  --color-icon-accent: #0f8fc2;
+  --color-icon-on-accent: #ffffff;
+
+  --color-status-live: #16a34a;
+  --color-status-success: #16a34a;
+  --color-status-error: #dc2626;
+
+  color-scheme: light;
+}
+
+/* space scale (4px base unit) */
+:root {
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
+  --space-96: 96px;
+  --space-120: 120px;
+  --space-160: 160px;
+
+  --radius-none: 0px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --radius-2xl: 48px;
+
+  --ease-site: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* {
+  border-color: var(--color-border-default);
 }
 
 html {
@@ -50,12 +121,117 @@ html {
 }
 
 body {
-  background-color: var(--base);
-  color: var(--t-bright);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
   font-family: "Funnel Sans", sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .font-accent {
   font-family: "Funnel Display", sans-serif;
+}
+
+.font-mono-label {
+  font-family: "JetBrains Mono", monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* button hover/active states — see Handoff Notes > Motion */
+.js-btn[data-variant="primary"]:hover {
+  background-color: var(--color-bg-accent-hover);
+  border-color: var(--color-bg-accent-hover);
+}
+.js-btn[data-variant="outline"]:hover,
+.js-btn[data-variant="outline-inverse"]:hover {
+  border-color: var(--color-border-accent);
+  color: var(--color-text-accent);
+}
+.js-btn[data-variant="ghost"]:hover {
+  color: var(--color-text-accent);
+}
+.js-btn:active {
+  transform: scale(0.98);
+}
+
+/* nav link underline sweep */
+.js-nav-link {
+  position: relative;
+}
+.js-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -4px;
+  height: 2px;
+  background: var(--color-text-accent);
+  transition: right 0.15s var(--ease-site);
+}
+.js-nav-link:hover::after,
+.js-nav-link[aria-current="page"]::after {
+  right: 0;
+}
+
+/* tag hover */
+.js-tag:hover {
+  background-color: var(--color-bg-raised);
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+
+/* icon button */
+.js-icon-btn:hover {
+  border-color: var(--color-border-accent);
+  color: var(--color-text-accent);
+}
+
+/* capability / project card hover */
+.js-card:hover {
+  border-color: var(--color-border-accent);
+  background-color: var(--color-bg-raised);
+}
+
+/* marquee */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.js-marquee-track {
+  animation: marquee 30s linear infinite;
+}
+.js-marquee:hover .js-marquee-track,
+.js-marquee:focus-within .js-marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js-marquee-track {
+    animation: none;
+  }
+}
+
+/* typed headline cursor */
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+.js-caret {
+  animation: caret-blink 530ms step-end infinite;
+}
+.js-caret[data-typing="true"] {
+  animation: none;
+  opacity: 1;
 }

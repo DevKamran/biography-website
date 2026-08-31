@@ -9,6 +9,7 @@ const config: Config = {
       fontFamily: {
         sans: ["\"Funnel Sans\"", "sans-serif"],
         accent: ["\"Funnel Display\"", "sans-serif"],
+        mono: ["\"JetBrains Mono\"", "monospace"],
       },
       screens: {
         xs: "420px",
