@@ -6,7 +6,7 @@
 
 export const profile = {
   name: "Kamran Ali",
-  title: "Senior Frontend Engineer",
+  title: "Full Stack Engineer",
   headerTitle: "Senior Frontend Engineer",
   location: "Karachi, Pakistan",
   heroIntro:

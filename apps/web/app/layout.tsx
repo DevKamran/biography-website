@@ -1,10 +1,32 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const title = "Kamran Ali | Full Stack Developer & UI/UX Engineer";
+const description =
+  "Kamran Ali is a Full Stack Developer frontend focused with 7+ years building enterprise SaaS and AI-powered products, hand-coding pixel-perfect React.js interfaces from Figma.";
+
 export const metadata: Metadata = {
-  title: "Kamran Ali | Senior UI/UX Engineer",
-  description:
-    "Kamran Ali is a Senior UI/UX Engineer with 7+ years building enterprise SaaS and AI-powered products, hand-coding pixel-perfect React.js interfaces from Figma.",
+  metadataBase: new URL("https://imkamranaly.vercel.app/"),
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    url: "/",
+    images: [
+      {
+        url: "/img/social_share.png",
+        width: 1670,
+        height: 726,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/img/social_share.png"],
+  },
 };
 
 export default function RootLayout({
