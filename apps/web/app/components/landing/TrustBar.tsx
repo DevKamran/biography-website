@@ -8,7 +8,11 @@ export default function TrustBar() {
       style={{ borderColor: "var(--color-border-subtle)" }}
     >
       <div className="mx-auto flex max-w-[1728px] flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-baseline gap-3">
+        <div className="flex items-center gap-3">
+          <span className="relative flex h-2.5 w-2.5 shrink-0">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500" />
+          </span>
           <span
             className="font-mono-label text-xs uppercase tracking-widest"
             style={{ color: "var(--color-text-accent)" }}

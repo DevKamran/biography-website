@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { ArrowDown } from "lucide-react";
 import { heroStats, heroTags, profile } from "@/lib/portfolio-data";
-import { ensureGsapRegistered } from "./ui/gsap";
+import { ensureGsapRegistered, useFloatAnimation } from "./ui/gsap";
 import gsap from "gsap";
 
 function FloatingMetric({
@@ -44,22 +44,26 @@ function FloatingMetric({
  * overlapping the tail end of the "Kamran Ali" wordmark — see Handoff
  * Notes > Hero, header & About build notes > Hero portrait. */
 function PortraitCluster({ className = "" }: { className?: string }) {
+  const floatRef = useFloatAnimation<HTMLDivElement>({ distance: 26, duration: 2 });
+
   return (
     <div className={`relative aspect-square w-full ${className}`}>
       <div
         className="absolute inset-[4%] rounded-full blur-xl"
         style={{ backgroundColor: "var(--color-bg-accent)", opacity: 0.4 }}
       />
-      <Image
-        src="/img/profile.jpeg"
-        alt={`${profile.name} — ${profile.title}`}
-        fill
-        priority
-        fetchPriority="high"
-        sizes="(min-width: 1600px) 320px, (min-width: 1200px) 260px, 220px"
-        className="relative rounded-full border object-cover"
-        style={{ borderColor: "var(--color-border-default)" }}
-      />
+      <div ref={floatRef} className="absolute inset-0">
+        <Image
+          src="/img/profile.jpeg"
+          alt={`${profile.name} — ${profile.title}`}
+          fill
+          priority
+          fetchPriority="high"
+          sizes="(min-width: 1600px) 320px, (min-width: 1200px) 260px, 220px"
+          className="relative rounded-full border object-cover"
+          style={{ borderColor: "var(--color-border-default)" }}
+        />
+      </div>
 
       <FloatingMetric
         value={heroStats[0].value}
@@ -77,6 +81,7 @@ function PortraitCluster({ className = "" }: { className?: string }) {
 
 export default function Hero() {
   const rootRef = useRef<HTMLElement>(null);
+  const arrowFloatRef = useFloatAnimation<SVGSVGElement>({ distance: 8, duration: 0.8 });
 
   useEffect(() => {
     ensureGsapRegistered();
@@ -154,7 +159,7 @@ export default function Hero() {
         style={{ color: "white" }}
       >
         Scroll for more
-        <ArrowDown color="#22b8e8" size={20} />
+        <ArrowDown ref={arrowFloatRef} color="#22b8e8" size={20} />
       </a>
     </section>
   );

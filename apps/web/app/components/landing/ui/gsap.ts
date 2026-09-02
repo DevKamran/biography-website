@@ -64,6 +64,37 @@ export function useScrollReveal<T extends HTMLElement>(
   return containerRef;
 }
 
+/** Slow, gentle up/down float loop for decorative elements, honouring prefers-reduced-motion. */
+export function useFloatAnimation<T extends Element>(
+  options: { distance?: number; duration?: number } = {}
+) {
+  const ref = useRef<T | null>(null);
+  const { distance = 14, duration = 4 } = options;
+
+  useEffect(() => {
+    ensureGsapRegistered();
+    const el = ref.current;
+    if (!el) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    const ctx = gsap.context(() => {
+      gsap.to(el, {
+        y: distance,
+        duration,
+        ease: "sine.inOut",
+        repeat: -1,
+        yoyo: true,
+      });
+    }, el);
+
+    return () => ctx.revert();
+  }, [distance, duration]);
+
+  return ref;
+}
+
 /** Counts a number up from 0 to its final value once it scrolls into view. */
 export function useCountUp<T extends HTMLElement>(finalText: string) {
   const ref = useRef<T | null>(null);
