@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     url: "/",
     images: [
       {
-        url: "/img/social_share.png",
+        url: "/img/social_share.jpeg",
         width: 1670,
         height: 726,
       },
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title,
     description,
-    images: ["/img/social_share.png"],
+    images: ["/img/social_share.jpeg"],
   },
 };
 
