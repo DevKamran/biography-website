@@ -10,7 +10,7 @@ export const profile = {
   headerTitle: "Senior Frontend Engineer",
   location: "Karachi, Pakistan",
   heroIntro:
-    "Senior Frontend Engineer at Digital Gravity — building real-time, AI-powered SaaS interfaces that are hand-coded, accessible and pixel-accurate.",
+    "AI Product Engineer & Full-Stack-Focused Frontend Developer — I understand the problem before I write the code. I design systems, build AI-driven workflows, and ship real-time SaaS interfaces that are accessible and pixel-accurate.",
   bio: "Senior Frontend Engineer with 7+ years building enterprise SaaS, AI-powered products, and pixel-perfect React.js interfaces — currently shipping Goalytics, an AI-powered OKR platform, at Digital Gravity.",
   email: "kamranali06022026@gmail.com",
   phone: "+92 312 2497222",
@@ -28,17 +28,22 @@ export const heroStats = [
 
 export const heroTags: string[] = [
   "JavaScript",
+  "Tailwind",
   "React.js",
   "Next.js",
   "TypeScript",
   "Vue.js",
   "Angular",
-  "Socket.io",
-  "SCSS",
-  "Tailwind",
-  "Design Systems",
+  "Collaborative UI",
+  "RAG Workflows",
+  "Python FastAPI",
+  "DevOps",
+  "Systems Design",
   "Accessibility",
   "Performance",
+  "Scalability",
+  "Design Systems",
+  "Component Libraries",
 ];
 
 export const navLinks = [
