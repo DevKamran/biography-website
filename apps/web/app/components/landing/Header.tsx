@@ -1,18 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, Code2, Menu, Moon, Sun, X } from "lucide-react";
+import Image from "next/image";
+import { ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
 import { profile, navLinks } from "@/lib/portfolio-data";
 import IconButton from "./ui/IconButton";
 
 function Logo() {
   return (
     <a href="#home" className="inline-flex items-center gap-3">
-      <span
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10"
-        style={{ backgroundColor: "var(--color-bg-accent)", color: "var(--color-text-on-accent)" }}
-      >
-        <Code2 size={18} />
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10">
+        <Image src="/img/logo.png" alt={`${profile.name} logo`} width={40} height={40} className="h-full w-full object-contain" priority />
       </span>
       <span className="flex flex-col leading-tight">
         <span className="font-accent text-base font-semibold sm:text-lg" style={{ color: "var(--color-text-primary)" }}>

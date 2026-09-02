@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://imkamranaly.vercel.app/"),
   title,
   description,
+  icons: {
+    icon: "/img/logo.png",
+    shortcut: "/img/logo.png",
+    apple: "/img/logo.png",
+  },
   openGraph: {
     title,
     description,
