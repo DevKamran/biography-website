@@ -5,6 +5,7 @@ import { ensureGsapRegistered } from "./ui/gsap";
 
 import Header from "./Header";
 import Hero from "./Hero";
+import ChatAgentFeature from "./ChatAgentFeature";
 import TrustBar from "./TrustBar";
 import Metrics from "./Metrics";
 import SelectedWork from "./SelectedWork";
@@ -31,7 +32,8 @@ export default function PortfolioLanding() {
       <Header />
       <Hero />
       <TrustBar />
-      <Metrics />
+      <ChatAgentFeature />
+      {/* <Metrics /> */}
       <SelectedWork />
       <Capabilities />
       <TechStack />

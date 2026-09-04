@@ -214,19 +214,53 @@ export const capabilities: Capability[] = [
 // ---------------------------------------------------------------------------
 
 export const techStackGroups: { label: string; tags: string[] }[] = [
-  { label: "Core frontend", tags: ["HTML5", "CSS3 / SCSS", "JavaScript", "Bootstrap"] },
-  { label: "Frameworks", tags: ["React.js", "Next.js", "Vue.js", "Angular"] },
+  { label: "Core frontend", tags: ["HTML5", "CSS3/SCSS", "Tailwind CSS", "Bootstrap", "W3C standards"] },
+  { label: "Frameworks", tags: ["React.js", "Next.js", "Vue.js", "TypeScript", "Angular"] },
   { label: "Backend", tags: ["Python FastAPI", "PHP", "Laravel"] },
-  { label: "Real-time", tags: ["Socket.io", "WebSockets", "LiveKit"] },
-  { label: "State", tags: ["Redux Toolkit", "Zustand", "Context API"] },
-  { label: "Design systems", tags: ["Figma", "Tailwind CSS", "ShadCN UI", "Component libraries"] },
-  { label: "API", tags: ["REST", "GraphQL", "Socket.io"] },
   {
-    label: "Build & devops",
+    label: "Real-time & collaboration",
+    tags: ["Socket.io", "WebSockets", "Multi-user collaboration", "Live presence", "Real-time data sync"],
+  },
+  {
+    label: "AI-integrated UI",
+    tags: ["Claude API workflows", "AI-powered suggestion interfaces", "AI output validation & ownership"],
+  },
+  {
+    label: "UI/UX & design",
+    tags: ["Figma", "Wireframes", "Mockups", "Prototypes", "Design system ownership", "Visual design instincts"],
+  },
+  {
+    label: "Design systems",
+    tags: ["Component libraries", "Tailwind CSS", "ShadCN UI", "Bootstrap", "Cross-surface UI standards"],
+  },
+  {
+    label: "Accessibility",
+    tags: ["WCAG-aligned practices", "Semantic HTML", "Keyboard navigation", "Focus management", "Section 508 awareness"],
+  },
+  {
+    label: "Responsive design",
+    tags: ["Mobile-first", "Fluid layouts", "Flexible CSS architecture", "RTL/multilingual layout"],
+  },
+  {
+    label: "Enterprise SaaS",
+    tags: ["Multi-step workflow UIs", "Admin dashboards", "Analytics interfaces", "Role-based access control"],
+  },
+  { label: "API integration", tags: ["REST APIs", "GraphQL", "WebSockets", "Socket.io"] },
+  { label: "State management", tags: ["Redux Toolkit", "Zustand", "Context API"] },
+  {
+    label: "Performance optimisation",
+    tags: ["Lighthouse audits", "Core Web Vitals", "Lazy loading", "Code splitting", "SSR/SSG", "CDN"],
+  },
+  {
+    label: "Build tools & devops",
     tags: ["Webpack", "Vite", "Git", "GitHub Actions", "Docker", "Vercel", "AWS", "Netlify"],
   },
   { label: "Testing", tags: ["Jest", "React Testing Library", "TDD"] },
-  { label: "AI workflow", tags: ["Claude", "GitHub Copilot", "Cursor", "Bolt"] },
+  {
+    label: "AI-assisted workflow",
+    tags: ["Claude", "GitHub Copilot", "Cursor", "Bolt", "Rigorous output validation"],
+  },
+  { label: "Methodologies", tags: ["Agile/Scrum", "Code reviews", "Mentoring", "Cross-functional collaboration"] },
 ];
 
 // ---------------------------------------------------------------------------
@@ -317,10 +351,10 @@ export const experience: Experience[] = [
 
 export const about = {
   eyebrow: "About me",
-  typedRoles: ["Frontend Engineer", "React Developer", "Design Systems", "Real-time UI", "AI Interfaces"],
+  typedRoles: ["Frontend Engineer", "React Developer", "Design Systems", "Full-Stack Developer", "AI Product Engineer"],
   paragraphs: [
-    "👋 I am Kamran — a senior frontend engineer in Karachi, 07 years into building interfaces for enterprise SaaS, AI products and high-traffic web. I hand-code HTML5, CSS3/SCSS and React rather than leaning on component libraries, which keeps the markup semantic and the build pixel-accurate to the Figma file.",
-    "I lead frontend at Digital Gravity on Goalytics, an AI-powered OKR platform — real-time Socket.io sessions, Claude-powered suggestion flows and role-based dashboards. I use AI tools every day, and I review every line they produce before it ships.",
+    "👋 I am Kamran — a Full Stack and AI Product Engineer, 7+ years into enterprise SaaS, AI-powered products and high-traffic web. I hand-code HTML5, CSS3/SCSS and pixel-perfect React.js from Figma, no component-library shortcuts, and I own the design systems that keep it consistent.",
+    "Right now I'm building Goalytics at Digital Gravity — real-time Socket.io sessions, Claude-powered suggestion workflows, role-based dashboards. I use AI tools daily and take full ownership of everything they produce before it ships.",
   ],
   education: [
     { degree: "MS Computer Science", school: "Muhammad Ali Jinnah University", dates: "2020 – 2022" },

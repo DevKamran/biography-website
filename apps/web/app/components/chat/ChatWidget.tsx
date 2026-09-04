@@ -6,6 +6,7 @@ import { MessageCircle, Send, User, X } from "lucide-react";
 import { profile } from "@/lib/portfolio-data";
 import { renderBold } from "@/lib/render-bold";
 import { useResumeChat } from "@/lib/use-resume-chat";
+import { useChatWidget } from "./ChatWidgetProvider";
 
 const BULLET_RE = /^[*-]\s+/;
 
@@ -75,7 +76,7 @@ function UserAvatar() {
 }
 
 export default function ChatWidget() {
-  const [open, setOpen] = useState(false);
+  const { open, setOpen } = useChatWidget();
   const [input, setInput] = useState("");
   const { sendMessage, messages, sending } = useResumeChat();
   const scrollRef = useRef<HTMLDivElement>(null);
