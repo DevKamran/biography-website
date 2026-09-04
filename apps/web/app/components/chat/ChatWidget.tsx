@@ -1,20 +1,11 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { MessageCircle, Send, User, X } from "lucide-react";
 import { profile } from "@/lib/portfolio-data";
+import { renderBold } from "@/lib/render-bold";
 import { useResumeChat } from "@/lib/use-resume-chat";
-
-function renderBold(text: string) {
-  return text.split(/(\*\*.*?\*\*)/g).map((part, i) =>
-    part.startsWith("**") && part.endsWith("**") ? (
-      <strong key={i}>{part.slice(2, -2)}</strong>
-    ) : (
-      <Fragment key={i}>{part}</Fragment>
-    )
-  );
-}
 
 const BULLET_RE = /^[*-]\s+/;
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { experience } from "@/lib/portfolio-data";
+import { renderBold } from "@/lib/render-bold";
 import { useScrollReveal } from "./ui/gsap";
 import SectionHeading from "./ui/SectionHeading";
 
@@ -46,7 +47,7 @@ export default function ExperienceSection() {
                       <span aria-hidden style={{ color: "var(--color-text-tertiary)" }}>
                         —
                       </span>
-                      {bullet}
+                      <span>{renderBold(bullet)}</span>
                     </li>
                   ))}
                 </ul>
