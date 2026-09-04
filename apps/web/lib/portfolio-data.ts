@@ -216,6 +216,7 @@ export const capabilities: Capability[] = [
 export const techStackGroups: { label: string; tags: string[] }[] = [
   { label: "Core frontend", tags: ["HTML5", "CSS3 / SCSS", "JavaScript", "Bootstrap"] },
   { label: "Frameworks", tags: ["React.js", "Next.js", "Vue.js", "Angular"] },
+  { label: "Backend", tags: ["Python FastAPI", "PHP", "Laravel"] },
   { label: "Real-time", tags: ["Socket.io", "WebSockets", "LiveKit"] },
   { label: "State", tags: ["Redux Toolkit", "Zustand", "Context API"] },
   { label: "Design systems", tags: ["Figma", "Tailwind CSS", "ShadCN UI", "Component libraries"] },
@@ -250,6 +251,7 @@ export const experience: Experience[] = [
       "Real-time multi-user OKR sessions on Socket.io — live presence, simultaneous editing, and commenting.",
       "Claude AI workflows for goal generation and weighting recommendations, with review / accept / reject on every suggestion.",
       "Role-based architecture across Admin, Manager, Participant and Viewer, plus multi-step onboarding and PDF export.",
+      "Integrated REST APIs across authentication, session management and progress tracking, hand-coding HTML5/CSS3/SCSS to W3C standards throughout.",
     ],
   },
   {
