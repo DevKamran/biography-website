@@ -11,6 +11,13 @@ export function ensureGsapRegistered() {
   if (registered || typeof window === "undefined") return;
   gsap.registerPlugin(ScrollTrigger);
   registered = true;
+
+  // Web fonts and images finishing after the initial layout pass shift
+  // element positions, leaving ScrollTrigger's cached start/end points stale
+  // (e.g. a reveal that never re-fires because its trigger point moved) —
+  // refresh once everything settles so cached positions match final layout.
+  window.addEventListener("load", () => ScrollTrigger.refresh());
+  document.fonts?.ready?.then(() => ScrollTrigger.refresh());
 }
 
 export const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
@@ -64,12 +71,13 @@ export function useScrollReveal<T extends HTMLElement>(
   return containerRef;
 }
 
-/** Slow, gentle up/down float loop for decorative elements, honouring prefers-reduced-motion. */
+/** Slow, gentle up/down (and optionally side-to-side) float loop for
+ * decorative elements, honouring prefers-reduced-motion. */
 export function useFloatAnimation<T extends Element>(
-  options: { distance?: number; duration?: number } = {}
+  options: { distance?: number; duration?: number; xDistance?: number; xDuration?: number } = {}
 ) {
   const ref = useRef<T | null>(null);
-  const { distance = 14, duration = 4 } = options;
+  const { distance = 14, duration = 4, xDistance = 0, xDuration } = options;
 
   useEffect(() => {
     ensureGsapRegistered();
@@ -87,10 +95,20 @@ export function useFloatAnimation<T extends Element>(
         repeat: -1,
         yoyo: true,
       });
+
+      if (xDistance) {
+        gsap.to(el, {
+          x: xDistance,
+          duration: xDuration ?? duration * 1.35,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        });
+      }
     }, el);
 
     return () => ctx.revert();
-  }, [distance, duration]);
+  }, [distance, duration, xDistance, xDuration]);
 
   return ref;
 }

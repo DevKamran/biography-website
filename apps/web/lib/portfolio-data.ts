@@ -118,7 +118,7 @@ export const selectedWork: SelectedWorkItem[] = [
     name: "Goalytics",
     tagline: "AI OKR Platform",
     description:
-      "Real-time collaborative OKR sessions with live presence and simultaneous editing, plus Claude-powered suggestion interfaces where participants review, accept or reject every AI output before it lands.",
+      "Real-time collaborative OKR sessions andgrea Goalytics isn't a place to log OKRs; it's the AI engine underneath them: generating goals, structuring objectives, balancing priorities, and surfacing insights, so your team spends time on strategy, not spreadsheets.",
     tags: ["React.js", "Socket.io", "Claude API"],
     stats: ["4 role-based UI layers", "100% hand-coded from Figma"],
     gradient: ["#1fb6e8", "#0a0e14"],
@@ -130,7 +130,7 @@ export const selectedWork: SelectedWorkItem[] = [
     name: "Vettio",
     tagline: "Enterprise SaaS Platform",
     description:
-      "Owned the frontend end to end — Figma wireframes through pixel-perfect React and Next.js — and built the shared component library that kept product and marketing surfaces consistent.",
+      "Vettio is an AI recruitment platform that helps hiring teams evaluate every candidate with zero manual effort. Instead of relying on keyword filters or skimming CVs, Ployo reads applications, conducts structured AI interviews, and delivers a ranked shortlist that explains exactly why each candidate is a fit.",
     tags: ["Next.js", "TypeScript", "LiveKit"],
     stats: ["40% faster delivery", "35% Core Web Vitals gain"],
     gradient: ["#f5a623", "#F99E1C"],
@@ -141,7 +141,7 @@ export const selectedWork: SelectedWorkItem[] = [
     name: "Savyour",
     tagline: "High-Traffic Web Platform",
     description:
-      "Owned both product UI and marketing landing pages on a high-traffic consumer platform, with SSR-based performance and brand-consistent UI across every surface.",
+      "Savyour is Pakistan's first & largest integrated consumer deals and rewards platform + Affiliate marketing network. Owned both product UI and marketing landing pages on a high-traffic consumer platform, with SSR-based performance and brand-consistent UI across every surface.",
     tags: ["Next.js", "Vue.js", "SCSS"],
     stats: ["SSR performance-first rendering", "2 surfaces owned solo"],
     gradient: ["#22c55e", "#E61C22"],

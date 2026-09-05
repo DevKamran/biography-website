@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
 import { ArrowUp, Sparkle } from "lucide-react";
 import { footer, profile } from "@/lib/portfolio-data";
-import { useScrollReveal } from "./ui/gsap";
+import { ensureGsapRegistered, useScrollReveal } from "./ui/gsap";
 import IconButton from "./ui/IconButton";
 
 function Card({
@@ -30,11 +31,62 @@ function ContactRow({ children }: { children: React.ReactNode }) {
 export default function Footer() {
   const containerRef = useScrollReveal<HTMLDivElement>("[data-reveal]", { y: 24, stagger: 0.06 });
   const backToTopRef = useRef<HTMLButtonElement>(null);
+  const footerRef = useRef<HTMLElement>(null);
+  const nameRef = useRef<HTMLParagraphElement>(null);
+  const cardsRowRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    ensureGsapRegistered();
+    const footerEl = footerRef.current;
+    const name = nameRef.current;
+    const cardsRow = cardsRowRef.current;
+    if (!footerEl || !name || !cardsRow) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    const ctx = gsap.context(() => {
+      // Background layer: the giant wordmark drifts slowly across the whole footer.
+      gsap.fromTo(
+        name,
+        { yPercent: 22 },
+        {
+          yPercent: -22,
+          ease: "none",
+          scrollTrigger: {
+            trigger: footerEl,
+            start: "top bottom",
+            end: "bottom bottom",
+            scrub: true,
+          },
+        }
+      );
+
+      // Foreground layer: the contact/nav cards slide up out of the wordmark,
+      // moving faster than it — real scroll-linked parallax, not a one-shot ease.
+      gsap.fromTo(
+        cardsRow,
+        { yPercent: 70 },
+        {
+          yPercent: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: footerEl,
+            start: "top bottom",
+            end: "top 15%",
+            scrub: true,
+          },
+        }
+      );
+    }, footerEl);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <footer className="px-6 py-16 sm:px-12 lg:px-14" style={{ backgroundColor: "var(--color-bg-surface)" }}>
+    <footer ref={footerRef} className="overflow-hidden px-6 py-16 sm:px-12 lg:px-14" style={{ backgroundColor: "var(--color-bg-surface)" }}>
       <div ref={containerRef} className="mx-auto flex max-w-[1728px] flex-col gap-16">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div ref={cardsRowRef} className="relative z-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Card data-reveal className="flex flex-col gap-3">
             {footer.nav.map((link) => (
               <a
@@ -112,8 +164,9 @@ export default function Footer() {
         </div>
 
         <p
+          ref={nameRef}
           data-reveal
-          className="select-none font-accent text-[15vw] font-extrabold leading-[0.85] tracking-tight text-center sm:text-[11vw] lg:text-[15rem]"
+          className="relative z-0 select-none font-accent text-[15vw] font-extrabold leading-[0.85] tracking-tight text-center sm:text-[11vw] lg:text-[15rem]"
           style={{ color: "var(--color-text-primary)" }}
         >
           {profile.name}
