@@ -17,6 +17,8 @@ export const profile = {
   links: {
     github: "https://github.com/imkamranaly", // TODO: confirm handle
     linkedin: "https://linkedin.com/in/imkamranaly", // TODO: confirm handle
+    instagram: "https://www.instagram.com/imkamranaly",
+    substack: "https://substack.com/@imkamranaly",
     resume: "/resume.pdf", // TODO: drop the real resume PDF in /public
   },
 };
@@ -173,27 +175,27 @@ export type Capability = {
 export const capabilities: Capability[] = [
   {
     icon: "code",
-    title: "Hand-coded, standards-first markup",
+    title: "Senior frontend & full-stack development",
     description:
-      "HTML5, CSS3/SCSS and React written by hand to W3C standards — not assembled from third-party component libraries.",
+      "Production React/Next.js frontends hand-coded to W3C standards, plus the full-stack surface behind them — UI, APIs and everything in between.",
+  },
+  {
+    icon: "sparkle",
+    title: "AI integration & AI agents",
+    description:
+      "Claude-powered agent workflows with tool-calling, review/accept/reject surfaces, and RAG pipelines — a person stays accountable for every AI output.",
+  },
+  {
+    icon: "layers",
+    title: "Complete frontend systems design",
+    description:
+      "Architecting the whole system, not just screens — design tokens, component libraries, state management and cross-surface consistency.",
   },
   {
     icon: "bolt",
     title: "Real-time & collaborative UI",
     description:
       "Socket.io multi-user sessions with live presence, simultaneous editing and conflict-free state sync.",
-  },
-  {
-    icon: "sparkle",
-    title: "AI-integrated interfaces",
-    description:
-      "Claude API workflows with review, accept and reject surfaces — so a person stays accountable for every AI output.",
-  },
-  {
-    icon: "layers",
-    title: "Design systems & component libraries",
-    description:
-      "Reusable components, tokens and cross-surface standards that keep product and marketing UI in step.",
   },
   {
     icon: "check-circle",
@@ -203,9 +205,9 @@ export const capabilities: Capability[] = [
   },
   {
     icon: "arrow-upward",
-    title: "Performance & Core Web Vitals",
+    title: "7+ years, 5 companies shipped for",
     description:
-      "SSR/SSG, lazy loading, code splitting and CDN delivery, measured with Lighthouse rather than guessed at.",
+      "From enterprise SaaS to AI-powered products — production frontend experience measured in shipped outcomes, not just output.",
   },
 ];
 
@@ -387,9 +389,11 @@ export const footer = {
   social: [
     { label: "LinkedIn", href: profile.links.linkedin },
     { label: "GitHub", href: profile.links.github },
-    { label: "Résumé (PDF)", href: profile.links.resume },
+    { label: "Instagram", href: profile.links.instagram },
+    { label: "Substack", href: profile.links.substack },
+    // { label: "Résumé (PDF)", href: profile.links.resume },
   ],
-  legal: `Kamran Ali | Senior Frontend Engineer © ${new Date().getFullYear()}`,
+  legal: `Kamran Ali | Full-Stack Engineer © ${new Date().getFullYear()}`,
 };
 
 // ---------------------------------------------------------------------------

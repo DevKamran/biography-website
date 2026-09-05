@@ -22,8 +22,17 @@ export default function ExperienceSection() {
               style={{ borderColor: i === 0 ? "transparent" : "var(--color-border-subtle)" }}
             >
               <div>
-                <p className="font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-accent)" }}>
+                <p
+                  className="flex items-center gap-1.5 font-mono-label text-xs uppercase tracking-widest"
+                  style={{ color: "var(--color-text-accent)" }}
+                >
                   {role.dates}
+                  {role.dates.includes("Present") && (
+                    <span className="relative flex h-1.5 w-1.5 shrink-0">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
+                    </span>
+                  )}
                 </p>
                 <p className="mt-1 font-mono-label text-xs" style={{ color: "var(--color-text-tertiary)" }}>
                   {role.location}
