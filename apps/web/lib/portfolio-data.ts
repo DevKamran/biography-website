@@ -48,6 +48,17 @@ export const heroTags: string[] = [
   "Component Libraries",
 ];
 
+export const roleMarquee: string[] = [
+  "Frontend Engineer",
+  "Full Stack Engineer",
+  "Frontend System Design",
+  "Scalability",
+  "Performance",
+  "AI Product Engineer",
+  "AI Workflows Development",
+  "DevOps",
+];
+
 export const navLinks = [
   { label: "Home", href: "#home" },
   { label: "About", href: "#about" },
@@ -294,7 +305,7 @@ export const experience: Experience[] = [
     ],
   },
   {
-    role: "Senior Frontend Engineer — Frontend Lead",
+    role: "Senior Frontend Engineer",
     company: "Disrupt.com (Vettio)",
     dates: "Mar 2021 — Jun 2025",
     location: "Karachi, PK",

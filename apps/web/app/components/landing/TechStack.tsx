@@ -3,6 +3,7 @@
 import { techStackGroups } from "@/lib/portfolio-data";
 import { useScrollReveal } from "./ui/gsap";
 import SectionHeading from "./ui/SectionHeading";
+import TagLogo from "./ui/TagLogo";
 
 function MarqueeRow({ label, tags }: { label: string; tags: string[] }) {
   return (
@@ -11,7 +12,7 @@ function MarqueeRow({ label, tags }: { label: string; tags: string[] }) {
       style={{ borderColor: "var(--color-border-subtle)" }}
     >
       <p
-        className="w-full shrink-0 font-mono-label text-[11px] uppercase tracking-widest sm:w-40"
+        className="w-full shrink-0 font-mono-label text-[13px] font-semibold uppercase tracking-widest sm:w-40"
         style={{ color: "var(--color-text-tertiary)" }}
       >
         {label}
@@ -20,9 +21,10 @@ function MarqueeRow({ label, tags }: { label: string; tags: string[] }) {
         {tags.map((tag) => (
           <span
             key={tag}
-            className="js-tag inline-flex h-9 shrink-0 items-center rounded-full border px-4 font-mono-label text-sm transition-colors"
+            className="js-tag inline-flex h-9 shrink-0 items-center gap-2 rounded-full border px-4 font-mono-label text-sm transition-colors"
             style={{ borderColor: "var(--color-border-default)", color: "var(--color-text-secondary)" }}
           >
+            <TagLogo tag={tag} />
             {tag}
           </span>
         ))}

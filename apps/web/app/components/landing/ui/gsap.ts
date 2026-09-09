@@ -113,6 +113,49 @@ export function useFloatAnimation<T extends Element>(
   return ref;
 }
 
+/** Types a string into an element, character by character, once it scrolls
+ * into view — honours prefers-reduced-motion (renders the full text
+ * immediately, no animation). Pair with a `.js-caret` element for a blinking
+ * cursor (see About.tsx's TypedRole for that pattern). */
+export function useTypeIn<T extends HTMLElement>(
+  text: string,
+  options: { start?: string; charDuration?: number } = {}
+) {
+  const ref = useRef<T | null>(null);
+  const { start = "top 85%", charDuration = 0.06 } = options;
+
+  useEffect(() => {
+    ensureGsapRegistered();
+    const el = ref.current;
+    if (!el) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) {
+      el.textContent = text;
+      return;
+    }
+
+    el.textContent = "";
+    const state = { chars: 0 };
+
+    const ctx = gsap.context(() => {
+      gsap.to(state, {
+        chars: text.length,
+        duration: text.length * charDuration,
+        ease: "none",
+        scrollTrigger: { trigger: el, start, once: true },
+        onUpdate: () => {
+          el.textContent = text.slice(0, Math.round(state.chars));
+        },
+      });
+    }, el);
+
+    return () => ctx.revert();
+  }, [text, start, charDuration]);
+
+  return ref;
+}
+
 /** Counts a number up from 0 to its final value once it scrolls into view. */
 export function useCountUp<T extends HTMLElement>(finalText: string) {
   const ref = useRef<T | null>(null);
