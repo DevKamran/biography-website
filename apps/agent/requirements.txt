@@ -19,3 +19,7 @@ pydantic>=2.13.0,<3
 
 # Config
 python-dotenv>=1.2.0,<2
+
+# Email (Resend HTTP API — used by the "send my resume to your email" tool;
+# sends over HTTPS instead of raw SMTP, which many PaaS hosts block outbound)
+httpx>=0.28.0,<0.29
