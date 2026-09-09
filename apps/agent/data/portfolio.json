@@ -1,0 +1,242 @@
+{
+  "profile": {
+    "name": "Kamran Ali",
+    "title": "Full Stack Engineer",
+    "headerTitle": "Senior Frontend Engineer",
+    "location": "Karachi, Pakistan",
+    "heroIntro": "AI Product Engineer & Full-Stack-Focused Frontend Developer — I understand the problem before I write the code. I design systems, build AI-driven workflows, and ship real-time SaaS interfaces that are accessible and pixel-accurate.",
+    "bio": "Senior Frontend Engineer with 7+ years building enterprise SaaS, AI-powered products, and pixel-perfect React.js interfaces — currently shipping Goalytics, an AI-powered OKR platform, at Digital Gravity.",
+    "email": "kamranali06022026@gmail.com",
+    "phone": "+92 312 2497222",
+    "links": {
+      "github": "https://github.com/imkamranaly",
+      "linkedin": "https://linkedin.com/in/imkamranaly",
+      "instagram": "https://www.instagram.com/imkamranaly",
+      "substack": "https://substack.com/@imkamranaly",
+      "resume": "/resume.pdf"
+    }
+  },
+  "about": {
+    "eyebrow": "About me",
+    "typedRoles": [
+      "Frontend Engineer",
+      "React Developer",
+      "Design Systems",
+      "Full-Stack Developer",
+      "AI Product Engineer"
+    ],
+    "paragraphs": [
+      "👋 I am Kamran — a Full Stack and AI Product Engineer, 7+ years into enterprise SaaS, AI-powered products and high-traffic web. I hand-code HTML5, CSS3/SCSS and pixel-perfect React.js from Figma, no component-library shortcuts, and I own the design systems that keep it consistent.",
+      "Right now I'm building Goalytics at Digital Gravity — real-time Socket.io sessions, Claude-powered suggestion workflows, role-based dashboards. I use AI tools daily and take full ownership of everything they produce before it ships."
+    ],
+    "education": [
+      {
+        "degree": "MS Computer Science",
+        "school": "Muhammad Ali Jinnah University",
+        "dates": "2020 – 2022"
+      },
+      {
+        "degree": "BS Computer Science",
+        "school": "Muhammad Ali Jinnah University",
+        "dates": "2013 – 2017"
+      }
+    ],
+    "certifications": [
+      {
+        "name": "Microsoft MCSA",
+        "detail": "Windows Server 2012"
+      },
+      {
+        "name": "Franklin Covey Academy",
+        "detail": "Leadership Certified"
+      }
+    ]
+  },
+  "skills": [
+    "HTML5",
+    "CSS3/SCSS",
+    "Tailwind CSS",
+    "Bootstrap",
+    "W3C standards",
+    "React.js",
+    "Next.js",
+    "Vue.js",
+    "TypeScript",
+    "Angular",
+    "Python FastAPI",
+    "PHP",
+    "Laravel",
+    "Socket.io",
+    "WebSockets",
+    "Multi-user collaboration",
+    "Live presence",
+    "Real-time data sync",
+    "Claude API workflows",
+    "AI-powered suggestion interfaces",
+    "AI output validation & ownership",
+    "Figma",
+    "Wireframes",
+    "Mockups",
+    "Prototypes",
+    "Design system ownership",
+    "Visual design instincts",
+    "Component libraries",
+    "Tailwind CSS",
+    "ShadCN UI",
+    "Bootstrap",
+    "Cross-surface UI standards",
+    "WCAG-aligned practices",
+    "Semantic HTML",
+    "Keyboard navigation",
+    "Focus management",
+    "Section 508 awareness",
+    "Mobile-first",
+    "Fluid layouts",
+    "Flexible CSS architecture",
+    "RTL/multilingual layout",
+    "Multi-step workflow UIs",
+    "Admin dashboards",
+    "Analytics interfaces",
+    "Role-based access control",
+    "REST APIs",
+    "GraphQL",
+    "WebSockets",
+    "Socket.io",
+    "Redux Toolkit",
+    "Zustand",
+    "Context API",
+    "Lighthouse audits",
+    "Core Web Vitals",
+    "Lazy loading",
+    "Code splitting",
+    "SSR/SSG",
+    "CDN",
+    "Webpack",
+    "Vite",
+    "Git",
+    "GitHub Actions",
+    "Docker",
+    "Vercel",
+    "AWS",
+    "Netlify",
+    "Jest",
+    "React Testing Library",
+    "TDD",
+    "Claude",
+    "GitHub Copilot",
+    "Cursor",
+    "Bolt",
+    "Rigorous output validation",
+    "Agile/Scrum",
+    "Code reviews",
+    "Mentoring",
+    "Cross-functional collaboration"
+  ],
+  "experience": [
+    {
+      "role": "Lead Frontend Developer",
+      "company": "Digital Gravity — Goalytics (AI OKR Platform)",
+      "dates": "Jul 2025 — Present",
+      "location": "Karachi, PK",
+      "bullets": [
+        "Building **Goalytics** (goalytics.io), an AI-powered OKR platform — designing and implementing pixel-perfect UI from Figma specifications in React.js, shipping hand-coded **HTML5/CSS3/SCSS** to W3C standards.",
+        "Implemented **real-time multi-user collaborative sessions** using Socket.io — live goal brainstorming, simultaneous editing, voting, commenting, and live presence indicators across all session participants simultaneously.",
+        "Integrated **Claude AI API workflows** for AI-powered goal generation, objective structuring, key result proposals, weightage balancing recommendations, and dashboard insights — adapting an AI-first development workflow throughout.",
+        "Built **AI-assisted suggestion interfaces**: surfaces Claude-generated OKR suggestions in real time during sessions, with UI for participants to review, accept, modify, or reject AI-generated content — embodying strong AI output validation and user accountability principles.",
+        "Developed **role-based UI architecture** (Admin, Manager, Participant, Viewer) with precisely scoped permission states, session control flows, and collaborative workspace interfaces.",
+        "Built **multi-step onboarding flows**, live session dashboards, goal-tracking interfaces, snapshot comparison views, and PDF export functionality — all responsive and cross-browser compatible.",
+        "Integrated REST APIs across **authentication, data submission, session management**, and progress tracking workflows; collaborated closely with backend engineers on API contracts."
+      ]
+    },
+    {
+      "role": "Senior Frontend Engineer",
+      "company": "Disrupt.com (Vettio)",
+      "dates": "Mar 2021 — Jun 2025",
+      "location": "Karachi, PK",
+      "bullets": [
+        "**Owned the Frontend of a production enterprise SaaS platform** end to end — from Figma wireframes and design system standards through to hand-coded, pixel-perfect React.js implementation — keeping experience consistent across all product touchpoints.",
+        "**Hand-coded pixel-perfect HTML5/CSS3/SCSS** and shipped it in React.js and Next.js, maintaining clean, W3C-standard, accessible markup without over-relying on third-party component libraries.",
+        "**Turned requirements from product, engineering, and design stakeholders** into wireframes, mockups, and prototypes in Figma, then implemented them with full fidelity in production.",
+        "**Built and maintained a design system and shared component library**, ensuring UI consistency across SaaS product surfaces and marketing-adjacent landing pages — reducing delivery time by 40%.",
+        "Implemented **WCAG-aligned accessibility practices** — semantic HTML, keyboard navigation, focus management, and colour contrast — ensuring inclusive, standards-compliant interfaces.",
+        "Built real-time WebSocket-driven features via LiveKit for live AI voice interview sessions, managing concurrent data streams and complex async UI states.",
+        "**Optimised frontend performance** achieving a 35% improvement in Lighthouse/Core Web Vitals scores via SSR/SSG, lazy loading, code splitting, and CDN integration.",
+        "**Used AI-assisted tools daily** (Claude, GitHub Copilot, Cursor) to accelerate workflows — with rigorous output validation, logic review, and full ownership of final deliverables.",
+        "**Led code reviews**, established frontend engineering standards, and mentored junior developers in Agile/Scrum sprints across product, engineering, and backend stakeholders.",
+        "**Maintained CI/CD pipelines** via GitHub Actions and Vercel; improved deployment reliability by 50% across staging and production environments."
+      ]
+    },
+    {
+      "role": "Front-End Developer",
+      "company": "Intersys Ltd",
+      "dates": "Apr 2019 — Feb 2021",
+      "location": "Karachi, PK",
+      "bullets": [
+        "Developed dynamic, visually rich web applications using React.js, HTML5, CSS3/SCSS, and Bootstrap — with a strong focus on fluid responsive layouts and smooth interactive experiences.",
+        "Implemented CSS animations, hover interactions, and scroll-triggered visual transitions to bring designer mockups to life with high fidelity, including a Pinterest-style visual media platform.",
+        "Applied image optimisation, lazy loading, and code splitting to ensure heavy visual assets loaded performantly without degrading animation smoothness or page speed.",
+        "Translated Figma and PSD designs into pixel-perfect, responsive interfaces and migrated legacy WordPress frontend to a modern React.js component architecture.",
+        "Customised and built WordPress themes from scratch, adapting Figma designs into fully responsive, brand-accurate theme builds."
+      ]
+    },
+    {
+      "role": "Front-End Developer",
+      "company": "Nanosoft",
+      "dates": "May 2018 — Apr 2019",
+      "location": "Karachi, PK",
+      "bullets": [
+        "Built responsive, interactive UI components for TaskQue using Angular and TypeScript, with real-time activity updates and animated state transitions for collaborative task tracking.",
+        "Integrated REST APIs and real-time notifications, managing dynamic UI state changes and animated feedback patterns using modern JavaScript async patterns.",
+        "Customised and built WordPress themes, adapting design mockups into responsive, production-ready theme builds."
+      ]
+    },
+    {
+      "role": "UI Developer",
+      "company": "EFSOL Solution",
+      "dates": "Mar 2017 — Apr 2018",
+      "location": "Karachi, PK",
+      "bullets": [
+        "Designed and built responsive marketing websites and landing pages using HTML5, CSS3, JavaScript, and jQuery — with hover effects, scroll animations, and JavaScript-driven UI interactions.",
+        "Translated PSD design layouts into pixel-perfect, animated interfaces in close collaboration with designers, ensuring brand precision and motion quality."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Goalytics",
+      "description": "Real-time collaborative OKR sessions andgrea Goalytics isn't a place to log OKRs; it's the AI engine underneath them: generating goals, structuring objectives, balancing priorities, and surfacing insights, so your team spends time on strategy, not spreadsheets.",
+      "tech": [
+        "React.js",
+        "Socket.io",
+        "Claude API"
+      ]
+    },
+    {
+      "name": "Vettio",
+      "description": "Vettio is an AI recruitment platform that helps hiring teams evaluate every candidate with zero manual effort. Instead of relying on keyword filters or skimming CVs, Ployo reads applications, conducts structured AI interviews, and delivers a ranked shortlist that explains exactly why each candidate is a fit.",
+      "tech": [
+        "Next.js",
+        "TypeScript",
+        "LiveKit"
+      ]
+    },
+    {
+      "name": "Savyour",
+      "description": "Savyour is Pakistan's first & largest integrated consumer deals and rewards platform + Affiliate marketing network. Owned both product UI and marketing landing pages on a high-traffic consumer platform, with SSR-based performance and brand-consistent UI across every surface.",
+      "tech": [
+        "Next.js",
+        "Vue.js",
+        "SCSS"
+      ]
+    },
+    {
+      "name": "TaskQue",
+      "description": "Accessible, cross-browser enterprise SPA with clean semantic markup, real-time API integration and role-based UI architecture built to W3C standards.",
+      "tech": [
+        "Angular",
+        "TypeScript",
+        "REST API"
+      ]
+    }
+  ]
+}

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import json
 import os
 
 from llama_index.core.query_engine import BaseQueryEngine
 from llama_index.core.tools import FunctionTool, QueryEngineTool
 
 from rag.mailer import send_resume_email
+from rag.portfolio_data import load_portfolio_data
 
 RESUME_OWNER_NAME = os.environ.get("RESUME_OWNER_NAME", "Kamran Ali")
 
@@ -40,6 +42,45 @@ def _get_resume_pdf_link_tool() -> str:
     return f"[Download {RESUME_OWNER_NAME}'s resume (PDF)]({RESUME_DOWNLOAD_PATH})"
 
 
+def _get_profile_tool() -> str:
+    """Return exact profile facts: name, title, location, bio, and contact/social links.
+
+    Prefer this over resume_qa for identity/contact questions (e.g. "what's
+    your email", "where are you based", "what's your GitHub") — it returns
+    the exact values the site displays instead of a paraphrase.
+    """
+    return json.dumps(load_portfolio_data()["profile"], indent=2)
+
+
+def _get_skills_tool() -> str:
+    """Return the exact list of technical skills from the site's tech stack.
+
+    Prefer this over resume_qa when the visitor asks what skills/technologies
+    are used — it returns the exact, current list instead of a paraphrase.
+    """
+    return ", ".join(load_portfolio_data()["skills"])
+
+
+def _get_projects_tool() -> str:
+    """Return exact project details (name, description, tech stack) for the
+    portfolio's featured projects.
+
+    Prefer this over resume_qa when the visitor asks about specific projects
+    or wants a list of projects — it returns the exact, current details.
+    """
+    return json.dumps(load_portfolio_data()["projects"], indent=2)
+
+
+def _get_experience_tool() -> str:
+    """Return the exact work experience history (role, company, dates,
+    location, and highlights for each position).
+
+    Prefer this over resume_qa when the visitor asks about work history,
+    employers, or dates — it returns the exact, current details.
+    """
+    return json.dumps(load_portfolio_data()["experience"], indent=2)
+
+
 def build_tools(query_engine: BaseQueryEngine) -> list:
     resume_qa_tool = QueryEngineTool.from_defaults(
         query_engine=query_engine,
@@ -71,4 +112,49 @@ def build_tools(query_engine: BaseQueryEngine) -> list:
             "your CV')."
         ),
     )
-    return [resume_qa_tool, send_email_tool, get_pdf_tool]
+    profile_tool = FunctionTool.from_defaults(
+        fn=_get_profile_tool,
+        name="get_profile",
+        description=(
+            f"Get {RESUME_OWNER_NAME}'s exact profile facts — name, title, "
+            "location, bio, and contact/social links (email, GitHub, "
+            "LinkedIn, etc). Prefer this over resume_qa for identity or "
+            "contact questions."
+        ),
+    )
+    skills_tool = FunctionTool.from_defaults(
+        fn=_get_skills_tool,
+        name="get_skills",
+        description=(
+            f"Get {RESUME_OWNER_NAME}'s exact, current list of technical "
+            "skills. Prefer this over resume_qa when asked what skills or "
+            "technologies they use."
+        ),
+    )
+    projects_tool = FunctionTool.from_defaults(
+        fn=_get_projects_tool,
+        name="get_projects",
+        description=(
+            f"Get {RESUME_OWNER_NAME}'s exact, current featured projects "
+            "(name, description, tech stack). Prefer this over resume_qa "
+            "when asked about specific projects or for a project list."
+        ),
+    )
+    experience_tool = FunctionTool.from_defaults(
+        fn=_get_experience_tool,
+        name="get_experience",
+        description=(
+            f"Get {RESUME_OWNER_NAME}'s exact, current work experience "
+            "history (role, company, dates, location, highlights). Prefer "
+            "this over resume_qa when asked about work history or employers."
+        ),
+    )
+    return [
+        resume_qa_tool,
+        send_email_tool,
+        get_pdf_tool,
+        profile_tool,
+        skills_tool,
+        projects_tool,
+        experience_tool,
+    ]
