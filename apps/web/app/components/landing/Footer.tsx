@@ -2,9 +2,9 @@
 
 import { Fragment, useEffect, useRef } from "react";
 import gsap from "gsap";
-import { ArrowUp, FileText, Rss, Sparkle } from "lucide-react";
+import { ArrowUp, FileText, Mail, Phone, Rss } from "lucide-react";
 import { footer, profile } from "@/lib/portfolio-data";
-import { ensureGsapRegistered, useScrollReveal } from "./ui/gsap";
+import { ensureGsapRegistered, useScrollReveal, useTypeIn } from "./ui/gsap";
 import IconButton from "./ui/IconButton";
 
 function GithubIcon({ size = 16 }: { size?: number }) {
@@ -57,10 +57,10 @@ function Card({
   );
 }
 
-function ContactRow({ children }: { children: React.ReactNode }) {
+function ContactRow({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) {
   return (
     <Card className="flex flex-1 items-center gap-3 self-stretch">
-      <Sparkle size={16} style={{ color: "var(--color-icon-accent)" }} />
+      <Icon size={16} style={{ color: "var(--color-icon-accent)" }} />
       {children}
     </Card>
   );
@@ -72,6 +72,7 @@ export default function Footer() {
   const footerRef = useRef<HTMLElement>(null);
   const nameRef = useRef<HTMLParagraphElement>(null);
   const cardsRowRef = useRef<HTMLDivElement>(null);
+  const typedNameRef = useTypeIn<HTMLSpanElement>(profile.name, { start: "top 85%", charDuration: 0.09 });
 
   useEffect(() => {
     ensureGsapRegistered();
@@ -136,10 +137,9 @@ export default function Footer() {
                 {link.label}
                 {link.label === "Selected work" && (
                   <span
-                    className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-mono-label text-[11px]"
+                    className="inline-flex items-center gap-1 font-weight-bold rounded-full px-2.5 py-1 font-mono-label text-[16px]"
                     style={{ backgroundColor: "var(--color-bg-accent)", color: "var(--color-text-on-accent)" }}
                   >
-                    <Sparkle size={10} />
                     {footer.workBadge}
                   </span>
                 )}
@@ -149,7 +149,7 @@ export default function Footer() {
 
           <div data-reveal className="flex h-full flex-col gap-4">
             <div className="flex h-full flex-col gap-4">
-              <ContactRow>
+              <ContactRow icon={Mail}>
                 <a
                   href={`mailto:${profile.email}`}
                   className="font-sans text-sm transition-opacity hover:opacity-70 sm:text-base"
@@ -158,7 +158,7 @@ export default function Footer() {
                   {profile.email}
                 </a>
               </ContactRow>
-              <ContactRow>
+              <ContactRow icon={Phone}>
                 <a
                   href={`tel:${profile.phone.replace(/\s+/g, "")}`}
                   className="font-sans text-sm transition-opacity hover:opacity-70 sm:text-base"
@@ -219,7 +219,13 @@ export default function Footer() {
           className="relative z-0 select-none font-accent text-[15vw] font-extrabold leading-[0.85] tracking-tight text-center sm:text-[11vw] lg:text-[15rem]"
           style={{ color: "var(--color-text-primary)" }}
         >
-          {profile.name}
+          <span aria-hidden="true" ref={typedNameRef} />
+          <span
+            aria-hidden="true"
+            className="js-caret ml-2 inline-block w-[3px] translate-y-[-0.05em] align-middle sm:w-[5px] lg:w-2"
+            style={{ height: "0.8em", backgroundColor: "var(--color-text-accent)" }}
+          />
+          <span className="sr-only">{profile.name}</span>
         </p>
       </div>
     </footer>

@@ -9,6 +9,7 @@ import ChatAgentFeature from "./ChatAgentFeature";
 import TrustBar from "./TrustBar";
 import Metrics from "./Metrics";
 import SelectedWork from "./SelectedWork";
+import RoleMarquee from "./RoleMarquee";
 import Capabilities from "./Capabilities";
 import TechStack from "./TechStack";
 import ExperienceSection from "./ExperienceSection";
@@ -35,6 +36,7 @@ export default function PortfolioLanding() {
       <ChatAgentFeature />
       {/* <Metrics /> */}
       <SelectedWork />
+      <RoleMarquee />
       <Capabilities />
       <TechStack />
       <ExperienceSection />

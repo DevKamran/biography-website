@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ArrowDown } from "lucide-react";
 import { heroStats, heroTags, profile } from "@/lib/portfolio-data";
 import { ensureGsapRegistered, useFloatAnimation } from "./ui/gsap";
+import TagLogo from "./ui/TagLogo";
 import gsap from "gsap";
 
 function FloatingMetric({
@@ -144,9 +145,10 @@ export default function Hero() {
           {heroTags.map((tag) => (
             <span
               key={tag}
-              className="js-tag inline-flex h-8 items-center rounded-full border px-4 font-mono-label text-xs transition-colors sm:h-9 sm:text-sm"
+              className="js-tag inline-flex h-8 items-center gap-2 rounded-full border px-4 font-mono-label text-xs transition-colors sm:h-9 sm:text-sm"
               style={{ borderColor: "var(--color-border-default)", color: "var(--color-text-secondary)" }}
             >
+              <TagLogo tag={tag} />
               {tag}
             </span>
           ))}
