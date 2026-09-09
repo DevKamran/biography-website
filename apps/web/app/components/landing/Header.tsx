@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ArrowUpRight, Menu, Moon, Sun, X } from "lucide-react";
+import gsap from "gsap";
 import { profile, navLinks } from "@/lib/portfolio-data";
+import { ensureGsapRegistered } from "./ui/gsap";
 import IconButton from "./ui/IconButton";
 
 function Logo() {
@@ -32,10 +34,34 @@ export default function Header() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const stored = window.localStorage.getItem("theme");
     if (stored === "light" || stored === "dark") setTheme(stored);
+  }, []);
+
+  useEffect(() => {
+    ensureGsapRegistered();
+    const header = headerRef.current;
+    if (!header) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const items = header.querySelectorAll<HTMLElement>("[data-header-in]");
+    if (reduceMotion || !items.length) return;
+
+    const ctx = gsap.context(() => {
+      gsap.set(items, { opacity: 0, y: -16 });
+      gsap.to(items, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: "power3.out",
+        stagger: 0.06,
+      });
+    }, header);
+
+    return () => ctx.revert();
   }, []);
 
   useEffect(() => {
@@ -68,16 +94,20 @@ export default function Header() {
   return (
     <>
       <header
+        ref={headerRef}
         className="fixed inset-x-0 top-0 z-[101] flex h-20 items-center justify-between border-b px-5 backdrop-blur-md sm:h-24 sm:px-10 lg:px-14"
         style={{
           backgroundColor: "color-mix(in srgb, var(--color-bg-surface) 82%, transparent)",
           borderColor: "var(--color-border-subtle)",
         }}
       >
-        <Logo />
+        <div data-header-in>
+          <Logo />
+        </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
           <IconButton
+            data-header-in
             role="switch"
             aria-checked={theme === "light"}
             aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
@@ -87,6 +117,7 @@ export default function Header() {
           </IconButton>
 
           <a
+            data-header-in
             href="#cta"
             className="js-btn hidden h-11 items-center gap-2 rounded-full border px-5 font-accent text-sm font-semibold transition-colors duration-150 sm:inline-flex"
             data-variant="primary"
@@ -101,6 +132,7 @@ export default function Header() {
           </a>
 
           <IconButton
+            data-header-in
             ref={menuButtonRef}
             aria-label="Open menu"
             aria-expanded={menuOpen}
