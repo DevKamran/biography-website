@@ -1,12 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
+type HistoryMessage = { role: "user" | "assistant"; content: string };
+
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const question = body?.question;
+  const rawHistory = Array.isArray(body?.history) ? body.history : [];
 
   if (typeof question !== "string" || !question.trim()) {
     return NextResponse.json({ error: "A non-empty 'question' is required." }, { status: 400 });
   }
+
+  const history: HistoryMessage[] = rawHistory.filter(
+    (m: unknown): m is HistoryMessage =>
+      typeof m === "object" &&
+      m !== null &&
+      (m as HistoryMessage).role !== undefined &&
+      ["user", "assistant"].includes((m as HistoryMessage).role) &&
+      typeof (m as HistoryMessage).content === "string"
+  );
 
   const baseUrl = process.env.RESUME_RAG_API_URL || "http://localhost:8000";
 
@@ -15,7 +29,8 @@ export async function POST(req: NextRequest) {
     res = await fetch(`${baseUrl}/query`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, history }),
+      cache: "no-store",
     });
   } catch (err) {
     console.error("Failed to reach agent backend:", err);

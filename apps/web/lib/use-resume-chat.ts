@@ -17,6 +17,11 @@ export function useResumeChat() {
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim()) return;
 
+    const history = messages.map((m) => ({
+      role: m.from === "visitor" ? "user" : "assistant",
+      content: m.text,
+    }));
+
     setMessages((prev) => [
       ...prev,
       { id: `${Date.now()}-me`, from: "visitor", text, timestamp: Date.now() },
@@ -29,7 +34,7 @@ export function useResumeChat() {
       const res = await fetch("/api/resume-query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: text }),
+        body: JSON.stringify({ question: text, history }),
       });
       const data = await res.json();
 
@@ -55,7 +60,7 @@ export function useResumeChat() {
     } finally {
       setSending(false);
     }
-  }, []);
+  }, [messages]);
 
   return { messages, sendMessage, sending, error };
 }
