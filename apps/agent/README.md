@@ -71,7 +71,12 @@ curl -s -X POST http://localhost:8000/query \
    directory), building from the included `Dockerfile`.
 3. Set env vars in the platform dashboard: `GEMINI_API_KEY`,
    `GEMINI_LLM_MODEL`, `GEMINI_EMBED_MODEL`, `QDRANT_URL`, `QDRANT_API_KEY`,
-   `QDRANT_COLLECTION_NAME`.
+   `QDRANT_COLLECTION_NAME`, and (for the "email me the resume" chat tool)
+   `RESEND_API_KEY`, `RESEND_FROM` — see `.env.example` for details. Email
+   uses Resend's HTTPS API rather than SMTP specifically because most PaaS
+   hosts (Railway included) block outbound SMTP ports. Without these the
+   chat agent still works, it just tells visitors email isn't configured
+   and offers the PDF download link instead.
 4. Run `python ingest.py --file <your-resume> --document "<name>"` once
    (locally against the same Qdrant cluster, or as a one-off job on the
    platform) — the container's default `CMD` only starts the API server, it
