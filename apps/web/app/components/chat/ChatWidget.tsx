@@ -2,13 +2,36 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { MessageCircle, Send, User, X } from "lucide-react";
+import { ChevronUp, FileDown, Loader2, Mail, MessageCircle, Minus, Send, User, X } from "lucide-react";
 import { profile } from "@/lib/portfolio-data";
 import { renderBold } from "@/lib/render-bold";
 import { useResumeChat } from "@/lib/use-resume-chat";
 import { useChatWidget } from "./ChatWidgetProvider";
 
 const BULLET_RE = /^[*-]\s+/;
+
+// The backend answers over a single request/response, so we can't observe
+// tool-call events directly — this infers which tool is likely running from
+// the visitor's own wording, purely to pick a matching loading state. Plain
+// questions (no tool implied) fall back to the regular "thinking" indicator.
+type LoadingStage = { key: "email" | "download" | "thinking"; label: string };
+
+function getLoadingStage(lastVisitorText: string): LoadingStage {
+  const t = lastVisitorText.toLowerCase();
+  if (/\b(email|mail)\b/.test(t) && /\b(send|mail|share)\b/.test(t)) {
+    return { key: "email", label: "Calling send_resume_email…" };
+  }
+  if (/\b(resume|cv)\b/.test(t) && /\b(pdf|download|file|link|copy)\b/.test(t)) {
+    return { key: "download", label: "Calling get_resume_pdf_link…" };
+  }
+  return { key: "thinking", label: "Thinking…" };
+}
+
+const LOADING_ICONS: Record<LoadingStage["key"], typeof Mail> = {
+  email: Mail,
+  download: FileDown,
+  thinking: MessageCircle,
+};
 
 function FormattedMessage({ text }: { text: string }) {
   // The backend sometimes runs bullets together on one line (e.g. "intro: * item * item")
@@ -78,12 +101,28 @@ function UserAvatar() {
 export default function ChatWidget() {
   const { open, setOpen } = useChatWidget();
   const [input, setInput] = useState("");
+  const [minimized, setMinimized] = useState(false);
   const { sendMessage, messages, sending } = useResumeChat();
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const lastVisitorMessage = [...messages].reverse().find((m) => m.from === "visitor");
+  const loadingStage = getLoadingStage(lastVisitorMessage?.text ?? "");
+  const LoadingIcon = LOADING_ICONS[loadingStage.key];
+
+  useEffect(() => {
+    if (!open) {
+      // Reset so the widget always reopens in its normal state.
+      setMinimized(false);
+    }
+  }, [open]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, sending]);
+
+  const sizeClass = minimized
+    ? "h-auto w-full sm:w-[24rem]"
+    : "h-[75vh] w-full max-h-[85vh] sm:h-[44rem] sm:w-[26rem] md:h-[50rem] md:w-[32rem]";
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -93,7 +132,7 @@ export default function ChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-3 right-6 z-50">
+    <div className="fixed inset-x-3 bottom-3 z-[110] flex justify-end sm:inset-x-auto sm:right-6">
       {open && (
         <div
           className="mb-2 flex h-[44rem] w-[26rem] max-h-[85vh] flex-col overflow-hidden rounded-2xl border shadow-2xl sm:h-[50rem] sm:w-[32rem]"
@@ -122,20 +161,32 @@ export default function ChatWidget() {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
                   </span>
-                  {sending ? "Thinking…" : "Online"}
+                  {sending ? loadingStage.label : "Online"}
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => setOpen(false)}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:opacity-70"
-              style={{ color: "var(--color-text-tertiary)" }}
-              aria-label="Close chat"
-            >
-              <X size={16} />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setMinimized((m) => !m)}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:opacity-70"
+                style={{ color: "var(--color-text-tertiary)" }}
+                aria-label={minimized ? "Restore chat" : "Minimize chat"}
+              >
+                {minimized ? <ChevronUp size={16} /> : <Minus size={16} />}
+              </button>
+              <button
+                onClick={() => setOpen(false)}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:opacity-70"
+                style={{ color: "var(--color-text-tertiary)" }}
+                aria-label="Close chat"
+              >
+                <X size={16} />
+              </button>
+            </div>
           </div>
 
+          {!minimized && (
+          <>
           <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
             {messages.length === 0 && (
               <p className="font-accent text-sm leading-relaxed" style={{ color: "var(--color-text-tertiary)" }}>
@@ -170,24 +221,44 @@ export default function ChatWidget() {
             {sending && (
               <div className="flex items-end gap-2">
                 <AgentAvatar />
-                <div
-                  className="flex w-fit items-center gap-1 rounded-xl px-3 py-2.5"
-                  style={{ backgroundColor: "var(--color-bg-sunken)" }}
-                  aria-label="Kamran's AI agent is thinking"
-                >
-                  <span
-                    className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.3s]"
-                    style={{ backgroundColor: "var(--color-text-tertiary)" }}
-                  />
-                  <span
-                    className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.15s]"
-                    style={{ backgroundColor: "var(--color-text-tertiary)" }}
-                  />
-                  <span
-                    className="h-1.5 w-1.5 animate-bounce rounded-full"
-                    style={{ backgroundColor: "var(--color-text-tertiary)" }}
-                  />
-                </div>
+                {loadingStage.key === "thinking" ? (
+                  <div
+                    className="flex w-fit items-center gap-1 rounded-xl px-3 py-2.5"
+                    style={{ backgroundColor: "var(--color-bg-sunken)" }}
+                    aria-label="Kamran's AI agent is thinking"
+                  >
+                    <span
+                      className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.3s]"
+                      style={{ backgroundColor: "var(--color-text-tertiary)" }}
+                    />
+                    <span
+                      className="h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:-0.15s]"
+                      style={{ backgroundColor: "var(--color-text-tertiary)" }}
+                    />
+                    <span
+                      className="h-1.5 w-1.5 animate-bounce rounded-full"
+                      style={{ backgroundColor: "var(--color-text-tertiary)" }}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="flex w-fit items-center gap-2 rounded-xl px-3 py-2.5"
+                    style={{ backgroundColor: "var(--color-bg-sunken)" }}
+                    aria-label={loadingStage.label}
+                  >
+                    <span className="relative flex h-4 w-4 shrink-0 items-center justify-center">
+                      <LoadingIcon size={13} style={{ color: "var(--color-text-accent)" }} />
+                      <Loader2
+                        size={20}
+                        className="absolute animate-spin"
+                        style={{ color: "var(--color-text-accent)", opacity: 0.35 }}
+                      />
+                    </span>
+                    <span className="text-xs font-medium" style={{ color: "var(--color-text-tertiary)" }}>
+                      {loadingStage.label}
+                    </span>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -221,6 +292,8 @@ export default function ChatWidget() {
               <Send size={15} />
             </button>
           </div>
+          </>
+          )}
         </div>
       )}
 
