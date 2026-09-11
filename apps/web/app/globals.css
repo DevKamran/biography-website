@@ -297,6 +297,42 @@ html.preload-lock body::-webkit-scrollbar {
   }
 }
 
+/* hero background glow: two soft blobs slowly drifting/pulsing to feel alive */
+@keyframes hero-breathe {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.18) translate(3%, 2%);
+    opacity: 1;
+  }
+}
+.hero-breathe-layer-a {
+  background-image: radial-gradient(
+    60% 60% at 25% 20%,
+    color-mix(in srgb, var(--color-bg-accent) 35%, transparent) 0%,
+    transparent 70%
+  );
+  animation: hero-breathe 10s ease-in-out infinite;
+}
+.hero-breathe-layer-b {
+  background-image: radial-gradient(
+    55% 55% at 75% 15%,
+    color-mix(in srgb, var(--color-bg-highlight) 30%, transparent) 0%,
+    transparent 70%
+  );
+  animation: hero-breathe 13s ease-in-out infinite reverse;
+  animation-delay: -4s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-breathe-layer-a,
+  .hero-breathe-layer-b {
+    animation: none;
+  }
+}
+
 /* typed headline cursor */
 @keyframes caret-blink {
   0%,

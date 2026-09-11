@@ -113,7 +113,6 @@ export default function Hero() {
       ref={rootRef}
       id="home"
       className="relative w-full overflow-hidden pt-32 pb-16 sm:pt-40 hero:min-h-[90vh] hero:pb-24 hero:pt-48"
-      style={{ backgroundColor: "var(--color-bg-surface)" }}
     >
       <div className="mx-auto flex w-full max-w-[1728px] flex-col px-6 sm:px-12 hero:px-14">
         <p

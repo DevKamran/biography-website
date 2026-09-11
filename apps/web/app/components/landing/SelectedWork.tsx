@@ -130,7 +130,7 @@ function PinnedShowcase() {
       className="relative hidden lg:block"
       style={{ height: `${selectedWork.length * 100}vh` }}
     >
-      <div className="sticky top-0 flex h-screen items-center px-6 lg:px-14" style={{ backgroundColor: "var(--color-bg-surface)" }}>
+      <div className="sticky top-0 flex h-screen items-center px-6 lg:px-14">
         <div className="mx-auto grid w-full max-w-[1728px] grid-cols-2 items-center gap-16">
           <div className="flex flex-col gap-8">
             <SectionHeading
@@ -187,7 +187,7 @@ function StackedList() {
   const containerRef = useScrollReveal<HTMLDivElement>("[data-reveal]", { stagger: 0.08, y: 40 });
 
   return (
-    <section className="px-6 py-24 sm:px-12 lg:hidden" style={{ backgroundColor: "var(--color-bg-surface)" }}>
+    <section className="px-6 py-24 sm:px-12 lg:hidden">
       <div ref={containerRef} className="mx-auto flex max-w-[1728px] flex-col gap-14">
         <SectionHeading
           eyebrow={`Selected work / 0${selectedWork.length}`}
