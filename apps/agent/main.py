@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 from llama_index.core.llms import ChatMessage, MessageRole
 from pydantic import BaseModel, Field
 
+from blog.router import router as blog_router
 from rag.agent import build_chat_agent
 from rag.mailer import RESUME_PDF_PATH
 
@@ -16,6 +17,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Resume RAG API", lifespan=lifespan)
+app.include_router(blog_router)
 
 _ROLE_MAP = {"user": MessageRole.USER, "assistant": MessageRole.ASSISTANT}
 

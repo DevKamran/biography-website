@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from llama_index.core.agent.workflow import FunctionAgent
 
+from blog.agent_tools import build_blog_tools
 from rag.config import load_settings
 from rag.pipeline import build_llm
 from rag.query_engine import RESUME_OWNER_NAME, RESUME_OWNER_ROLE, build_query_engine
@@ -32,6 +33,14 @@ AGENT_SYSTEM_PROMPT = (
     "rather than a question about its contents. Include the markdown link it "
     "returns in your reply exactly as given, e.g. [Download my resume "
     "(PDF)](/api/resume-download).\n"
+    "- `get_blog_posts` to list your published blog posts (title, category, "
+    "excerpt, link) — use this for any question about blog posts, articles, "
+    "or writing, including 'how many posts have you written' or 'what have "
+    "you written about X'. Never invent blog post titles or topics — if this "
+    "tool returns no posts or nothing relevant, say so. When mentioning a "
+    "post, include its link as a markdown link using the tool's `url` field "
+    "copied verbatim, character for character — never retype or modify it, "
+    "e.g. [Post title](/blog/post-slug).\n"
 )
 
 
@@ -39,7 +48,7 @@ def build_chat_agent() -> FunctionAgent:
     cfg = load_settings()
     llm = build_llm(cfg, system_prompt=AGENT_SYSTEM_PROMPT)
     query_engine = build_query_engine()
-    tools = build_tools(query_engine)
+    tools = build_tools(query_engine) + build_blog_tools()
 
     return FunctionAgent(
         name=f"{RESUME_OWNER_NAME} portfolio agent",

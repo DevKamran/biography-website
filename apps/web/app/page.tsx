@@ -2,8 +2,22 @@ import PortfolioLanding from "./components/landing/PortfolioLanding";
 import Preloader from "./components/landing/Preloader";
 import ChatWidget from "./components/chat/ChatWidget";
 import { ChatWidgetProvider } from "./components/chat/ChatWidgetProvider";
+import { getPosts, type BlogPostSummary } from "@/lib/blog-api";
 
-export default function Home() {
+async function getLatestBlogPosts(): Promise<BlogPostSummary[]> {
+  try {
+    const { posts } = await getPosts({ page_size: 4 });
+    return posts;
+  } catch {
+    // The agent backend may be unreachable — the landing page should never
+    // break because of it, it just skips the blog preview section.
+    return [];
+  }
+}
+
+export default async function Home() {
+  const blogPosts = await getLatestBlogPosts();
+
   return (
     <ChatWidgetProvider>
       <Preloader />
@@ -32,7 +46,7 @@ export default function Home() {
             }}
           />
         </div>
-        <PortfolioLanding />
+        <PortfolioLanding blogPosts={blogPosts} />
         <ChatWidget />
       </main>
     </ChatWidgetProvider>

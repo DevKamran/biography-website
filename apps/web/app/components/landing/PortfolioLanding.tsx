@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { ensureGsapRegistered } from "./ui/gsap";
+import type { BlogPostSummary } from "@/lib/blog-api";
 
 import Header from "./Header";
 import Hero from "./Hero";
@@ -13,6 +14,7 @@ import RoleMarquee from "./RoleMarquee";
 import Capabilities from "./Capabilities";
 import TechStack from "./TechStack";
 import ExperienceSection from "./ExperienceSection";
+import BlogPreview from "./BlogPreview";
 import About from "./About";
 import CTA from "./CTA";
 import Footer from "./Footer";
@@ -23,7 +25,7 @@ import Footer from "./Footer";
  * animations are registered once here and driven per-section by the
  * `ui/gsap.ts` hooks (useScrollReveal, useCountUp).
  */
-export default function PortfolioLanding() {
+export default function PortfolioLanding({ blogPosts = [] }: { blogPosts?: BlogPostSummary[] }) {
   useEffect(() => {
     ensureGsapRegistered();
   }, []);
@@ -40,6 +42,7 @@ export default function PortfolioLanding() {
       <Capabilities />
       <TechStack />
       <ExperienceSection />
+      <BlogPreview posts={blogPosts} />
       <About />
       <CTA />
       <Footer />

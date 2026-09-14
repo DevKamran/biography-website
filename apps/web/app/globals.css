@@ -202,6 +202,76 @@ html {
   }
 }
 
+/* Typography for admin-authored blog post HTML (app/blog/[slug]). */
+.blog-content > * + * {
+  margin-top: 1.25em;
+}
+.blog-content h1,
+.blog-content h2,
+.blog-content h3 {
+  font-family: "Funnel Display", sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+.blog-content h1 {
+  font-size: 1.875rem;
+}
+.blog-content h2 {
+  font-size: 1.5rem;
+}
+.blog-content h3 {
+  font-size: 1.25rem;
+}
+.blog-content a {
+  color: var(--color-text-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.blog-content ul,
+.blog-content ol {
+  padding-left: 1.5em;
+}
+.blog-content ul {
+  list-style: disc;
+}
+.blog-content ol {
+  list-style: decimal;
+}
+.blog-content blockquote {
+  border-left: 3px solid var(--color-border-accent);
+  padding-left: 1em;
+  color: var(--color-text-tertiary);
+  font-style: italic;
+}
+.blog-content img {
+  border-radius: var(--radius-md);
+  max-width: 100%;
+}
+.blog-content code {
+  font-family: "JetBrains Mono", monospace;
+  background-color: var(--color-bg-raised);
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+  font-size: 0.9em;
+}
+.blog-content pre {
+  font-family: "JetBrains Mono", monospace;
+  background-color: var(--color-bg-raised);
+  border-radius: var(--radius-md);
+  padding: 1em;
+  overflow-x: auto;
+}
+.blog-content pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.prose-editor .ProseMirror {
+  outline: none;
+  min-height: 280px;
+}
+
 /* button hover/active states — see Handoff Notes > Motion */
 .js-btn[data-variant="primary"]:hover {
   background-color: var(--color-bg-accent-hover);

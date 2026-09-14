@@ -60,10 +60,11 @@ export const roleMarquee: string[] = [
 ];
 
 export const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Selected work", href: "#work" },
-  { label: "Contact", href: "#cta" },
+  { label: "Home", href: "/#home" },
+  { label: "About", href: "/#about" },
+  { label: "Selected work", href: "/#work" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/#cta" },
 ];
 
 // ---------------------------------------------------------------------------
