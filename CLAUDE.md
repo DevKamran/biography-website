@@ -4,96 +4,153 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-A portfolio/biography website: a Next.js frontend paired with a Python LiveKit
-agent that powers an in-page AI chat widget answering visitor questions about
-the site owner. It's an npm-workspaces monorepo with two apps:
+A portfolio/biography site with a chat widget powered by an AI agent that uses
+RAG (retrieval-augmented generation). The agent answers visitor questions as
+the site owner, in the first person. The site also has a blog with an admin
+dashboard. npm-workspaces monorepo with two apps:
 
-- `apps/web` — Next.js 14 (App Router, TypeScript, Tailwind) frontend
-- `apps/agent` — Python LiveKit worker that runs the chat LLM loop
+- `apps/web` — Next.js 14 (App Router, TypeScript, Tailwind, GSAP, Tiptap)
+- `apps/agent` — the AI agent that uses RAG, served as a Python FastAPI
+  service. It is a LlamaIndex tool-calling agent: it retrieves resume chunks
+  from Qdrant (vector DB) by embedding similarity, then has Gemini
+  (LLM + embeddings) answer only from what it retrieved and from exact
+  portfolio data. If the answer isn't there, it says so instead of making
+  details up.
 
-Both apps must be running simultaneously for the chat widget to work end to
-end: the frontend serves the site and mints LiveKit tokens; the agent is the
-long-lived process that actually replies to chat messages.
+The frontend never lets the browser talk to the agent directly: every call
+goes through a Next.js route handler or Server Component using
+`RESUME_RAG_API_URL` (default `http://localhost:8000`). Both apps must be
+running for chat and blog pages to work. If the agent is unreachable, the
+landing page still renders and just drops the blog preview.
 
 ## Commands
 
-Run from the repo root (npm workspaces):
+From the repo root:
 
 ```bash
-npm run dev:web      # next dev, apps/web, http://localhost:3000
+npm run dev:web      # next dev, http://localhost:3000
 npm run build:web    # next build
-npm run start:web    # next start (serves a production build)
+npm run start:web    # serve the production build
 ```
 
-Or from `apps/web` directly: `npm run dev`, `npm run build`, `npm run start`,
-`npm run lint` (next lint). There is no test suite configured in either app.
+From `apps/web`: `npm run lint` (next lint), and
+`npm run export:portfolio` (see "Content sync" below).
 
-Agent worker (from `apps/agent`, separate Python venv):
+Agent (from `apps/agent`, separate venv, Python ≥ 3.9):
 
 ```bash
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env       # fill in LiveKit + OpenAI credentials
-python agent.py dev        # local dev, hot-reloads on file changes
-python agent.py start      # production mode
+cp .env.example .env    # GEMINI_API_KEY, QDRANT_URL, QDRANT_API_KEY, BLOG_ADMIN_TOKEN, MAILJET_*
+python ingest.py --file data/KamranAli_Resume.pdf --document "KamranAli_Resume"
+uvicorn main:app --reload --port 8000
 ```
 
-Env setup for the frontend: `cp apps/web/.env.local.example apps/web/.env.local`
-and fill in LiveKit credentials (`LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`,
-`NEXT_PUBLIC_LIVEKIT_URL`). The agent needs its own `.env` in `apps/agent`
-with the same LiveKit project's credentials plus `OPENAI_API_KEY`.
+`ingest.py` is a one-off step, so re-run it whenever the resume changes. It is
+not part of the request path, and the Docker `CMD` does not run it.
+Re-ingesting with the same `--document` replaces that document's chunks.
 
-## Architecture: how the chat widget works end to end
+There is no test suite in either app. To smoke-test the agent, run
+`curl -X POST localhost:8000/query -H 'Content-Type: application/json' -d '{"question":"..."}'`.
 
-1. Visitor opens `ChatWidget` (`apps/web/app/components/chat/ChatWidget.tsx`)
-   → `useLiveKitChat` hook (`apps/web/lib/use-livekit-chat.ts`) calls
-   `GET /api/livekit-token`.
-2. That route (`apps/web/app/api/livekit-token/route.ts`) mints a LiveKit
-   access token, creates a per-visitor room (`portfolio-chat-<identity>`),
-   and explicitly **dispatches** the Python agent into that room by name
-   (`AGENT_NAME = "portfolio-agent"` — this constant must match
-   `AGENT_NAME` in `apps/agent/agent.py`).
-3. The frontend connects to the room and both sides communicate over a
-   LiveKit **text-stream topic** named `"chat"` (not LiveKit's chat
-   protocol) — see `registerTextStreamHandler`/`sendText` in
-   `use-livekit-chat.ts` and `register_text_stream_handler`/`send_text` in
-   `agent.py`. Participant identity prefix (`"visitor-..."` vs anything
-   else) is how each side tells visitor messages from agent replies apart.
-4. The agent keeps an in-memory, per-room conversation history and runs a
-   tool-calling loop against `gpt-4o-mini` (`run_conversation` in
-   `agent.py`), using tools defined in `apps/agent/tools/portfolio_tools.py`
-   (`get_profile`, `get_skills`, `get_projects`, `get_experience`), all
-   backed by `apps/agent/data/portfolio.json`.
+Env: `cp apps/web/.env.local.example apps/web/.env.local` and fill in
+`RESUME_RAG_API_URL`, `BLOG_ADMIN_TOKEN` (must equal the agent's),
+`BLOG_ADMIN_PASSWORD`, `BLOG_SESSION_SECRET`.
 
-## Content is duplicated, not shared
+## Architecture
 
-Site content exists in **two places that must be kept in sync manually**:
+### Chat
 
-- `apps/web/lib/portfolio-data.ts` — feeds the visible page sections
-  (profile, hero stats/tags, nav links, skills, projects, experience)
-- `apps/agent/data/portfolio.json` — feeds what the chat agent can answer
-  via its tools
+`ChatWidget` → `useResumeChat` (`apps/web/lib/use-resume-chat.ts`) →
+`POST /api/resume-query`. The route forwards `{question, history}` to the
+agent's `POST /query`. The client keeps the conversation history and sends
+it on each request; the agent is stateless.
 
-There is currently no shared source of truth or API route bridging them;
-editing one without the other will make the chat agent's answers drift from
-the visible page content.
+The agent (`apps/agent/rag/agent.py`) is a LlamaIndex `FunctionAgent`, built
+once in FastAPI's lifespan. Its system prompt lists every tool with usage
+rules, so when you add or rename a tool, update `AGENT_SYSTEM_PROMPT` too.
+Tools:
 
-## Frontend structure
+- `get_profile` / `get_skills` / `get_projects` / `get_experience`
+  (`rag/tools.py`): return exact data from `apps/agent/data/portfolio.json`.
+  The prompt tells the agent to prefer these.
+- `resume_qa`: RAG over resume chunks in Qdrant (`rag/query_engine.py`,
+  `rag/pipeline.py`). Chunks are split by resume section, not by token
+  count (`rag/chunking.py`).
+- `send_resume_email` (`rag/mailer.py`) sends through Mailjet's HTTPS API
+  instead of SMTP, because Railway blocks outbound SMTP.
+- `get_resume_pdf_link` returns `/api/resume-download`, which proxies the
+  agent's `GET /resume`.
+- `get_blog_posts` (`blog/agent_tools.py`).
 
-- `app/page.tsx` composes the page from section components in
-  `app/components/sections/` (Hero, Skills, Projects, Experience, Contact)
-  plus `app/components/layout/SiteHeader.tsx` and
-  `app/components/chat/ChatWidget.tsx`.
-- Path alias `@/*` maps to `apps/web/*` (see `tsconfig.json`).
-- Tailwind content scanning is limited to `app/**/*.{js,ts,jsx,tsx,mdx}`
-  (`tailwind.config.ts`); custom font families `sans` (Funnel Sans) and
-  `accent` (Funnel Display), and custom breakpoints `xs` (420px), `hero`
-  (1200px), `hero-lg` (1600px).
+The persona comes from `RESUME_OWNER_NAME` / `RESUME_OWNER_ROLE`.
+
+### Vector DB (Qdrant)
+
+One Qdrant Cloud cluster (`QDRANT_URL`, `QDRANT_API_KEY`) holds two
+collections. Both are embedded with the same Gemini model
+(`GEMINI_EMBED_MODEL`).
+
+- **Resume chunks** (`QDRANT_COLLECTION_NAME`, default `resume_chunks`):
+  `ingest.py` fills it through LlamaIndex's `QdrantVectorStore`
+  (`rag/pipeline.py`). Each chunk carries `document`/`section`/`role`
+  metadata (`rag/chunking.py`), so a bullet point stays tied to its job.
+  Re-ingesting replaces chunks with the same `document` tag. `resume_qa`
+  retrieves the top 4 chunks by similarity (`rag/query_engine.py`).
+- **Blog posts** (`QDRANT_COLLECTION_BLOG_POSTS`, default `blog_posts`):
+  used as the blog's database through the raw `qdrant_client`
+  (`blog/store.py`), not through LlamaIndex. It is created automatically on
+  first use with cosine distance and payload indexes on
+  `slug`/`status`/`category`. The vector size is detected from the embedding
+  model.
+
+If you change `GEMINI_EMBED_MODEL`, the vector dimensions may no longer
+match: recreate the collections and re-run `ingest.py`.
+
+### Blog
+
+- Posts are stored in the Qdrant `blog_posts` collection (see above).
+  Categories are derived from the posts.
+- `apps/agent/blog/router.py` exposes `/blog/posts`, `/blog/posts/{slug}`
+  and `/blog/categories`. Writes require the `X-Admin-Token` header. Reads
+  without the token only see `published` posts.
+- Public pages (`app/blog/*`, landing `BlogPreview`) are Server Components
+  that call the agent directly through `lib/blog-api.ts`, with 60s ISR
+  revalidation.
+- The admin dashboard (`app/admin/blog/*`, Tiptap editor in
+  `components/blog-admin/`) is a client UI that goes through
+  `app/api/blog/*` proxies. Those routes attach `BLOG_ADMIN_TOKEN` on the
+  server only when the request carries a valid admin session.
+- Admin auth: `/api/blog-admin/login` checks `BLOG_ADMIN_PASSWORD` and sets
+  an HMAC-signed cookie (`lib/blog-admin-auth.ts`). `middleware.ts` guards
+  `/admin/blog/*`. The auth lib uses Web Crypto rather than Node `crypto`,
+  because it must also run in the Edge middleware runtime.
+
+## Content sync
+
+`apps/web/lib/portfolio-data.ts` is the single source of truth for the
+profile, skills, projects, and experience. The agent reads a generated copy,
+`apps/agent/data/portfolio.json`. After editing `portfolio-data.ts`, run
+`npm run export:portfolio` in `apps/web`, or the chat answers will drift from
+the page. The agent caches that file with `lru_cache`, so restart it after
+regenerating. The resume PDF is a separate source: re-run `ingest.py` when it
+changes.
+
+## Frontend notes
+
+- `app/page.tsx` renders `components/landing/PortfolioLanding.tsx` (landing
+  sections plus GSAP helpers in `components/landing/ui/`), wrapped in
+  `ChatWidgetProvider`.
+- Path alias `@/*` → `apps/web/*`.
+- Tailwind only scans `app/**/*`, so classes used only in `lib/` files are
+  not generated. Custom fonts: `sans` (Funnel Sans), `accent` (Funnel
+  Display), `mono` (JetBrains Mono). Custom breakpoints: `xs` 420px, `hero`
+  1200px, `hero-lg` 1600px.
 
 ## Deployment
 
-- Frontend: Vercel or any Next.js host.
-- Agent: must run as a long-lived process (Render, Fly.io, Railway, a VPS)
-  — it is **not** deployable as a serverless function, since it holds a
-  persistent LiveKit worker connection and per-room conversation state.
-- Both apps must point at the same LiveKit Cloud project's credentials.
+- Frontend: Vercel. Set `RESUME_RAG_API_URL` to the deployed agent URL.
+- Agent: Docker container (`apps/agent/Dockerfile`) on Railway; it listens on
+  `$PORT`. Run `ingest.py` against the same Qdrant cluster separately.
+- Vector DB: Qdrant Cloud, which holds both the resume chunks and the blog
+  posts.

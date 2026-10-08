@@ -409,8 +409,8 @@ export const footer = {
 };
 
 // ---------------------------------------------------------------------------
-// Legacy aliases kept for the LiveKit chat agent tools / API routes that may
-// still reference the old flat shape.
+// Flat aliases exported to apps/agent/data/portfolio.json by
+// scripts/export-portfolio-data.ts for the chat agent's tools.
 // ---------------------------------------------------------------------------
 
 export const skills: string[] = techStackGroups.flatMap((g) => g.tags);
