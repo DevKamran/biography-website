@@ -420,3 +420,6 @@ html.preload-lock body::-webkit-scrollbar {
   animation: none;
   opacity: 1;
 }
+.blog-content :is(h1, h2, h3) {
+  scroll-margin-top: 7rem;
+}

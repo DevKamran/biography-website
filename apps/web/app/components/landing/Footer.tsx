@@ -2,9 +2,10 @@
 
 import { Fragment, useEffect, useRef } from "react";
 import gsap from "gsap";
+import Image from "next/image";
 import { ArrowUp, FileText, Mail, Phone, Rss } from "lucide-react";
 import { footer, profile } from "@/lib/portfolio-data";
-import { ensureGsapRegistered, useScrollReveal, useTypeIn } from "./ui/gsap";
+import { ensureGsapRegistered, useScrollReveal } from "./ui/gsap";
 import IconButton from "./ui/IconButton";
 
 function GithubIcon({ size = 16, style }: { size?: number; style?: React.CSSProperties }) {
@@ -80,7 +81,6 @@ export default function Footer() {
   const footerRef = useRef<HTMLElement>(null);
   const nameRef = useRef<HTMLParagraphElement>(null);
   const cardsRowRef = useRef<HTMLDivElement>(null);
-  const typedNameRef = useTypeIn<HTMLSpanElement>(profile.name, { start: "top 85%", charDuration: 0.09 });
 
   useEffect(() => {
     ensureGsapRegistered();
@@ -93,12 +93,13 @@ export default function Footer() {
     if (reduceMotion) return;
 
     const ctx = gsap.context(() => {
-      // Background layer: the giant wordmark drifts slowly across the whole footer.
+      // Background layer: the giant wordmark rises into place as the footer
+      // scrolls in, ending fully visible.
       gsap.fromTo(
         name,
-        { yPercent: 22 },
+        { yPercent: 30 },
         {
-          yPercent: -22,
+          yPercent: 0,
           ease: "none",
           scrollTrigger: {
             trigger: footerEl,
@@ -131,7 +132,16 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer ref={footerRef} className="overflow-hidden px-6 py-16 sm:px-12 lg:px-14">
+    <footer ref={footerRef} className="relative overflow-hidden px-6 py-16 sm:px-12 lg:px-14">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 55% 70% at 100% 100%, var(--color-bg-accent-subtle), transparent 70%)",
+          opacity: 0.6,
+        }}
+      />
       <div ref={containerRef} className="mx-auto flex max-w-[1728px] flex-col gap-16">
         <div ref={cardsRowRef} className="relative z-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Card data-reveal className="flex flex-col gap-3">
@@ -224,16 +234,25 @@ export default function Footer() {
         <p
           ref={nameRef}
           data-reveal
-          className="relative z-0 select-none font-accent text-[15vw] font-extrabold leading-[0.85] tracking-tight text-center sm:text-[11vw] lg:text-[15rem]"
-          style={{ color: "var(--color-text-primary)" }}
+          aria-label={profile.name}
+          className="relative z-0 flex select-none items-center justify-center gap-[0.12em] whitespace-nowrap font-accent text-[10.5vw] font-extrabold uppercase leading-none tracking-tight lg:text-[min(10.5vw,13rem)]"
+          style={{
+            backgroundImage:
+              "linear-gradient(90deg, var(--color-border-subtle) 0%, var(--color-border-default) 50%, var(--color-bg-accent-subtle) 100%)",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            color: "transparent",
+          }}
         >
-          <span aria-hidden="true" ref={typedNameRef} />
-          <span
-            aria-hidden="true"
-            className="js-caret ml-2 inline-block w-[3px] translate-y-[-0.05em] align-middle sm:w-[5px] lg:w-2"
-            style={{ height: "0.8em", backgroundColor: "var(--color-text-accent)" }}
+          <Image
+            src="/img/logo.png"
+            alt=""
+            aria-hidden
+            width={240}
+            height={240}
+            className="h-[0.8em] w-auto shrink-0 object-contain opacity-25 grayscale"
           />
-          <span className="sr-only">{profile.name}</span>
+          {profile.name}
         </p>
       </div>
     </footer>
