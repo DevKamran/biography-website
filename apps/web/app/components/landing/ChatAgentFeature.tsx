@@ -184,7 +184,7 @@ function MockChatPanel() {
             className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border"
             style={{ borderColor: "var(--color-border-default)" }}
           >
-            <Image src="/img/logo.png" alt={profile.name} fill className="object-cover" />
+            <Image src="/img/logo.png" alt="" fill className="object-cover" />
           </span>
           <div>
             <p className="font-accent text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>

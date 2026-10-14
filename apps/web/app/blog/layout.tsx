@@ -28,7 +28,7 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
         />
       </div>
       <Header />
-      <main className="relative z-[1] mx-auto min-h-[60vh] max-w-[1100px] px-5 pb-16 pt-32 sm:px-10 sm:pt-40 lg:px-14">
+      <main id="main-content" tabIndex={-1} className="relative focus:outline-none z-[1] mx-auto min-h-[60vh] max-w-[1100px] px-5 pb-16 pt-32 sm:px-10 sm:pt-40 lg:px-14">
         {children}
       </main>
       <Footer />

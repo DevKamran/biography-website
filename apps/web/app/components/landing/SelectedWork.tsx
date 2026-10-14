@@ -102,6 +102,11 @@ function PinnedShowcase() {
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
+      // Never steal arrow keys from text fields (e.g. the chat input) or from
+      // modified shortcuts.
+      const target = e.target as HTMLElement | null;
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      if (target?.closest("input, textarea, select, [contenteditable='true'], [role='dialog']")) return;
       const section = sectionRef.current;
       if (!section) return;
       const rect = section.getBoundingClientRect();
@@ -138,11 +143,13 @@ function PinnedShowcase() {
               heading="Things I have shipped"
               subtitle="Four products where I owned the frontend end to end — from the Figma file to the deploy pipeline."
             />
-            <div className="flex items-center gap-2">
+            <div role="group" aria-label="Projects" className="flex items-center gap-1">
               {selectedWork.map((item, i) => (
                 <button
                   key={item.slug}
+                  type="button"
                   aria-label={`Show ${item.name}`}
+                  aria-current={i === activeIndex ? "true" : undefined}
                   onClick={() => {
                     const section = sectionRef.current;
                     if (!section) return;
@@ -150,12 +157,18 @@ function PinnedShowcase() {
                     const denom = selectedWork.length - 1 || 1;
                     window.scrollTo({ top: section.offsetTop + (total * i) / denom, behavior: "smooth" });
                   }}
-                  className="h-1.5 cursor-pointer rounded-full transition-all duration-300"
-                  style={{
-                    width: i === activeIndex ? "2rem" : "0.6rem",
-                    backgroundColor: i === activeIndex ? "var(--color-text-accent)" : "var(--color-border-default)",
-                  }}
-                />
+                  // 24px-tall hit area around the thin bar (WCAG 2.5.8 Target Size).
+                  className="flex h-6 min-w-6 cursor-pointer items-center justify-center rounded-full"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="h-1.5 rounded-full transition-all duration-300"
+                    style={{
+                      width: i === activeIndex ? "2rem" : "0.6rem",
+                      backgroundColor: i === activeIndex ? "var(--color-text-accent)" : "var(--color-border-strong)",
+                    }}
+                  />
+                </button>
               ))}
             </div>
           </div>
@@ -164,6 +177,11 @@ function PinnedShowcase() {
             {selectedWork.map((item, i) => (
               <div
                 key={item.slug}
+                // Hidden slides are only faded out; inert keeps their links
+                // out of the tab order and the accessibility tree.
+                ref={(el) => {
+                  if (el) el.inert = i !== activeIndex;
+                }}
                 aria-hidden={i !== activeIndex}
                 className="absolute inset-0 transition-all duration-500 ease-out"
                 style={{

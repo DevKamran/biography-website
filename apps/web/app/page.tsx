@@ -21,7 +21,7 @@ export default async function Home() {
   return (
     <ChatWidgetProvider>
       <Preloader />
-      <main>
+      <div>
         <div
           className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[500px] overflow-hidden"
           aria-hidden="true"
@@ -48,7 +48,7 @@ export default async function Home() {
         </div>
         <PortfolioLanding blogPosts={blogPosts} />
         <ChatWidget />
-      </main>
+      </div>
     </ChatWidgetProvider>
   );
 }

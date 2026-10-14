@@ -66,7 +66,6 @@ export default function Preloader() {
   return (
     <div
       role="status"
-      aria-live="polite"
       aria-hidden={isExiting}
       className="fixed inset-0 z-[999] flex items-center justify-center transition-opacity duration-500 ease-out"
       style={{
@@ -75,7 +74,9 @@ export default function Preloader() {
         pointerEvents: isExiting ? "none" : "auto",
       }}
     >
-      <div className="flex flex-col items-center gap-4">
+      {/* One short message instead of announcing every percent tick. */}
+      <span className="sr-only">Loading…</span>
+      <div aria-hidden="true" className="flex flex-col items-center gap-4">
         <p
           className="font-accent text-7xl font-bold tabular-nums sm:text-8xl"
           style={{ color: "var(--color-text-primary)" }}

@@ -36,6 +36,9 @@ export default function PostEditorForm({ initialPost }: { initialPost?: BlogPost
     extensions: [StarterKit, LinkExtension, ImageExtension],
     content: initialPost?.content ?? "",
     immediatelyRender: false,
+    editorProps: {
+      attributes: { role: "textbox", "aria-multiline": "true", "aria-labelledby": "field-content-label" },
+    },
   });
 
   useEffect(() => {
@@ -95,44 +98,47 @@ export default function PostEditorForm({ initialPost }: { initialPost?: BlogPost
   return (
     <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col gap-6">
       <div>
-        <label className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
+        <label htmlFor="field-title" className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
           Title
         </label>
         <input
+          id="field-title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Post title"
-          className="w-full rounded-lg border px-4 py-3 font-accent text-lg outline-none"
+          className="w-full rounded-lg border px-4 py-3 font-accent text-lg"
           style={inputStyle}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
-          <label className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
+          <label htmlFor="field-slug" className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
             Slug
           </label>
           <input
+            id="field-slug"
             value={slug}
             onChange={(e) => {
               setSlugTouched(true);
               setSlug(slugify(e.target.value));
             }}
             placeholder="post-slug"
-            className="w-full rounded-lg border px-4 py-3 font-sans text-sm outline-none"
+            className="w-full rounded-lg border px-4 py-3 font-sans text-sm"
             style={inputStyle}
           />
         </div>
         <div>
-          <label className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
+          <label htmlFor="field-category" className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
             Category
           </label>
           <input
+            id="field-category"
             list="category-suggestions"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             placeholder="e.g. Engineering"
-            className="w-full rounded-lg border px-4 py-3 font-sans text-sm outline-none"
+            className="w-full rounded-lg border px-4 py-3 font-sans text-sm"
             style={inputStyle}
           />
           <datalist id="category-suggestions">
@@ -144,14 +150,15 @@ export default function PostEditorForm({ initialPost }: { initialPost?: BlogPost
       </div>
 
       <div>
-        <label className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
+        <label htmlFor="field-cover-image-url-optional" className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
           Cover image URL (optional)
         </label>
         <input
+          id="field-cover-image-url-optional"
           value={coverImage}
           onChange={(e) => setCoverImage(e.target.value)}
           placeholder="https://…"
-          className="w-full rounded-lg border px-4 py-3 font-sans text-sm outline-none"
+          className="w-full rounded-lg border px-4 py-3 font-sans text-sm"
           style={inputStyle}
         />
         {coverImage && (
@@ -161,23 +168,24 @@ export default function PostEditorForm({ initialPost }: { initialPost?: BlogPost
       </div>
 
       <div>
-        <label className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
+        <label htmlFor="field-excerpt" className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
           Excerpt
         </label>
         <textarea
+          id="field-excerpt"
           value={excerpt}
           onChange={(e) => setExcerpt(e.target.value)}
           rows={2}
           placeholder="Short summary shown on the blog index"
-          className="w-full rounded-lg border px-4 py-3 font-sans text-sm outline-none"
+          className="w-full rounded-lg border px-4 py-3 font-sans text-sm"
           style={inputStyle}
         />
       </div>
 
       <div>
-        <label className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
+        <p id="field-content-label" className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
           Content
-        </label>
+        </p>
         <EditorToolbar editor={editor} />
         <div
           className="rounded-b-xl border px-4 py-3"
