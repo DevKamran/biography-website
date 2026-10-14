@@ -75,7 +75,7 @@ export const trustBar = {
   currentlyLabel: "Currently",
   currently: "Lead Frontend Developer — Digital Gravity, Karachi",
   previouslyLabel: "Previously",
-  previously: ["Disrupt.com (Vettio)", "Intersys Ltd", "Nanosoft", "EFSOL Solution"],
+  previously: ["Disrupt.com (Ployo.ai, formerly Vettio)", "Intersys Ltd", "Nanosoft", "EFSOL Solution"],
 };
 
 // ---------------------------------------------------------------------------
@@ -140,15 +140,15 @@ export const selectedWork: SelectedWorkItem[] = [
    
   },
   {
-    slug: "vettio",
-    name: "Vettio",
-    tagline: "Enterprise SaaS Platform",
+    slug: "ployo",
+    name: "Ployo.ai",
+    tagline: "AI Recruitment Platform",
     description:
-      "Vettio is an AI recruitment platform that helps hiring teams evaluate every candidate with zero manual effort. Instead of relying on keyword filters or skimming CVs, Ployo reads applications, conducts structured AI interviews, and delivers a ranked shortlist that explains exactly why each candidate is a fit.",
+      "Ployo.ai (formerly Vettio) is an AI recruitment platform with a built-in ATS and a live AI video interviewer that interviews every applicant. It parses CVs against role requirements, verifies must-haves like right to work during the call, flags integrity signals, and delivers an explainable ranked shortlist with full transcripts, so recruiters make the final call. 30,000+ AI interviews completed and 15,000+ recruiter hours saved.",
     tags: ["Next.js", "TypeScript", "LiveKit"],
     stats: ["40% faster delivery", "35% Core Web Vitals gain"],
     gradient: ["#f5a623", "#F99E1C"],
-    image: "/img/companies/vettio_banner.png",
+    image: "/img/companies/ployo_banner.jpg",
   },
   {
     slug: "savyour",
@@ -307,7 +307,7 @@ export const experience: Experience[] = [
   },
   {
     role: "Senior Frontend Engineer",
-    company: "Disrupt.com (Vettio)",
+    company: "Disrupt.com (Ployo.ai, formerly Vettio)",
     dates: "Mar 2021 — Jun 2025",
     location: "Karachi, PK",
     bullets: [

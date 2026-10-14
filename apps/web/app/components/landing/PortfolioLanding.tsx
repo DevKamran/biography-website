@@ -33,6 +33,9 @@ export default function PortfolioLanding({ blogPosts = [] }: { blogPosts?: BlogP
   return (
     <>
       <Header />
+      {/* Header and Footer sit outside <main> so landmarks are banner / main /
+          contentinfo; the skip link in Header targets #main-content (2.4.1). */}
+      <main id="main-content" tabIndex={-1} className="focus:outline-none">
       <Hero />
       <TrustBar />
       <ChatAgentFeature />
@@ -45,6 +48,7 @@ export default function PortfolioLanding({ blogPosts = [] }: { blogPosts?: BlogP
       <BlogPreview posts={blogPosts} />
       <About />
       <CTA />
+      </main>
       <Footer />
     </>
   );

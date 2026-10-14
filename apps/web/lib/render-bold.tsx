@@ -21,6 +21,7 @@ export function renderBold(text: string): ReactNode[] {
           style={{ color: "var(--color-text-accent)" }}
         >
           {label}
+          <span className="sr-only"> (opens in a new tab)</span>
         </a>
       );
     }

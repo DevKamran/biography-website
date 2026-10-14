@@ -46,15 +46,17 @@ function LoginForm() {
           Sign in to manage posts.
         </p>
 
-        <label className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
+        <label htmlFor="field-password" className="mb-2 block font-mono-label text-xs uppercase tracking-widest" style={{ color: "var(--color-text-tertiary)" }}>
           Password
         </label>
         <input
+          id="field-password"
           type="password"
+          // eslint-disable-next-line jsx-a11y/no-autofocus -- the only field on a dedicated sign-in page
           autoFocus
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mb-4 w-full rounded-lg border px-4 py-3 font-sans text-sm outline-none"
+          className="mb-4 w-full rounded-lg border px-4 py-3 font-sans text-sm"
           style={{ borderColor: "var(--color-border-default)", backgroundColor: "var(--color-bg-surface)", color: "var(--color-text-primary)" }}
         />
 

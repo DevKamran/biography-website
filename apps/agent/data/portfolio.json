@@ -150,7 +150,7 @@
     },
     {
       "role": "Senior Frontend Engineer",
-      "company": "Disrupt.com (Vettio)",
+      "company": "Disrupt.com (Ployo.ai, formerly Vettio)",
       "dates": "Mar 2021 — Jun 2025",
       "location": "Karachi, PK",
       "bullets": [
@@ -212,8 +212,8 @@
       ]
     },
     {
-      "name": "Vettio",
-      "description": "Vettio is an AI recruitment platform that helps hiring teams evaluate every candidate with zero manual effort. Instead of relying on keyword filters or skimming CVs, Ployo reads applications, conducts structured AI interviews, and delivers a ranked shortlist that explains exactly why each candidate is a fit.",
+      "name": "Ployo.ai",
+      "description": "Ployo.ai (formerly Vettio) is an AI recruitment platform with a built-in ATS and a live AI video interviewer that interviews every applicant. It parses CVs against role requirements, verifies must-haves like right to work during the call, flags integrity signals, and delivers an explainable ranked shortlist with full transcripts, so recruiters make the final call. 30,000+ AI interviews completed and 15,000+ recruiter hours saved.",
       "tech": [
         "Next.js",
         "TypeScript",
