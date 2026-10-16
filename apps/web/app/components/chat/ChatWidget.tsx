@@ -1,37 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { ChevronUp, FileDown, Loader2, Mail, MessageCircle, Minus, Send, User, X } from "lucide-react";
+import { AlertCircle, ChevronUp, MessageCircle, Minus, Send, Square, User, X } from "lucide-react";
 import { profile } from "@/lib/portfolio-data";
 import { renderBold } from "@/lib/render-bold";
-import { useResumeChat } from "@/lib/use-resume-chat";
+import { useResumeChat, type ChatStatus } from "@/lib/use-resume-chat";
 import { useChatWidget } from "./ChatWidgetProvider";
 
 const BULLET_RE = /^[*-]\s+/;
 
-// The backend answers over a single request/response, so we can't observe
-// tool-call events directly — this infers which tool is likely running from
-// the visitor's own wording, purely to pick a matching loading state. Plain
-// questions (no tool implied) fall back to the regular "thinking" indicator.
-type LoadingStage = { key: "email" | "download" | "thinking"; label: string };
-
-function getLoadingStage(lastVisitorText: string): LoadingStage {
-  const t = lastVisitorText.toLowerCase();
-  if (/\b(email|mail)\b/.test(t) && /\b(send|mail|share)\b/.test(t)) {
-    return { key: "email", label: "Calling send_resume_email…" };
-  }
-  if (/\b(resume|cv)\b/.test(t) && /\b(pdf|download|file|link|copy)\b/.test(t)) {
-    return { key: "download", label: "Calling get_resume_pdf_link…" };
-  }
-  return { key: "thinking", label: "Thinking…" };
-}
-
-const LOADING_ICONS: Record<LoadingStage["key"], typeof Mail> = {
-  email: Mail,
-  download: FileDown,
-  thinking: MessageCircle,
+// Progress labels for the agent's tools, as reported by the stream (see
+// apps/agent/main.py /query/stream). Anything unknown is just "Thinking…".
+const TOOL_LABELS: Record<string, string> = {
+  resume_qa: "Searching my resume…",
+  get_profile: "Looking up my profile…",
+  get_skills: "Looking up my skills…",
+  get_projects: "Looking up my projects…",
+  get_experience: "Looking up my experience…",
+  send_resume_email: "Sending the email…",
+  get_resume_pdf_link: "Getting the resume link…",
+  get_blog_posts: "Checking my blog posts…",
 };
+
+function progressLabel(status: ChatStatus, activeTool: string | null) {
+  if (activeTool && TOOL_LABELS[activeTool]) return TOOL_LABELS[activeTool];
+  return status === "streaming" ? "Replying…" : "Thinking…";
+}
 
 function FormattedMessage({ text }: { text: string }) {
   // The backend sometimes runs bullets together on one line (e.g. "intro: * item * item")
@@ -112,25 +107,32 @@ function toSpokenText(text: string) {
 const ICON_BUTTON_CLASS =
   "flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:opacity-70";
 
+// How close (px) to the bottom still counts as "following" the conversation.
+const STICKY_SCROLL_PX = 48;
+const INPUT_MAX_HEIGHT_PX = 128;
+
 export default function ChatWidget() {
   const { open, setOpen } = useChatWidget();
   const [input, setInput] = useState("");
   const [minimized, setMinimized] = useState(false);
   const [announcement, setAnnouncement] = useState("");
-  const { sendMessage, messages, sending } = useResumeChat();
+  const [inputHint, setInputHint] = useState("");
+  const { sendMessage, stop, retry, messages, status, busy, error, activeTool } = useResumeChat();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLElement>(null);
   // Whatever had focus when the chat opened ("Chat with my AI", or the
   // "Try it" button in ChatAgentFeature) gets focus back on close (WCAG 2.4.3).
   const openerRef = useRef<HTMLElement | null>(null);
   const wasOpenRef = useRef(false);
-  const announcedIdRef = useRef<string | null>(null);
+  const followRef = useRef(true);
+  const prevStatusRef = useRef<ChatStatus>(status);
+  const announceTimerRef = useRef<number>();
+  const prevToolRef = useRef<string | null>(null);
 
-  const lastVisitorMessage = [...messages].reverse().find((m) => m.from === "visitor");
-  const loadingStage = getLoadingStage(lastVisitorMessage?.text ?? "");
-  const LoadingIcon = LOADING_ICONS[loadingStage.key];
+  const label = progressLabel(status, activeTool);
+  const agentName = `${profile.name}'s AI`;
 
   useEffect(() => {
     if (open) {
@@ -146,50 +148,121 @@ export default function ChatWidget() {
     wasOpenRef.current = open;
   }, [open]);
 
-  useEffect(() => {
+  // Keep the newest message in view, but only while the visitor is already
+  // at the bottom: never yank them away from something they scrolled back to.
+  // Reduced motion gets an instant jump instead of a smooth scroll (2.3.3).
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (!el || !followRef.current) return;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: reduceMotion ? "auto" : "smooth" });
-  }, [messages, sending]);
+    el.scrollTo({ top: el.scrollHeight, behavior: reduceMotion ? "auto" : "smooth" });
+  }, [messages, status]);
 
-  // Screen readers hear the progress and each new agent reply through one
-  // polite live region, so focus can stay in the input (WCAG 4.1.3). The
-  // visitor's own messages are not announced back to them.
+  const onConversationScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    followRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < STICKY_SCROLL_PX;
+  };
+
+  // Screen-reader announcements go through one polite live region so focus
+  // can stay in the input (WCAG 4.1.3). While a reply streams in, the text
+  // is NOT announced piece by piece — that floods the speech queue and gets
+  // cut off. Instead: one "replying" notice (plus tool progress), then the
+  // whole reply once it's complete, or a "stopped" notice. Errors are
+  // announced separately by the role="alert" box.
   useEffect(() => {
-    if (sending) {
-      setAnnouncement(loadingStage.key === "thinking" ? `${profile.name}'s AI is thinking…` : loadingStage.label);
+    // Clear, then set on the next tick, so the same text twice in a row
+    // (e.g. "thinking" for consecutive questions) is still announced.
+    const announce = (text: string) => {
+      setAnnouncement("");
+      window.clearTimeout(announceTimerRef.current);
+      announceTimerRef.current = window.setTimeout(() => setAnnouncement(text), 50);
+    };
+    const prev = prevStatusRef.current;
+    prevStatusRef.current = status;
+    const prevTool = prevToolRef.current;
+    prevToolRef.current = activeTool;
+
+    if (status === "waiting" && prev !== "waiting") {
+      announce(`${agentName} is thinking. Press Escape to stop.`);
+    } else if (busy && activeTool && activeTool !== prevTool && TOOL_LABELS[activeTool]) {
+      announce(TOOL_LABELS[activeTool]);
+    } else if (status === "idle" && (prev === "waiting" || prev === "streaming")) {
+      const last = messages[messages.length - 1];
+      if (last?.from === "agent") announce(`${profile.name} said: ${toSpokenText(last.text)}`);
+    } else if (status === "stopped" && prev !== "stopped") {
+      const last = messages[messages.length - 1];
+      announce(
+        last?.from === "agent" && last.stopped && last.text
+          ? "Response stopped. The partial reply is kept in the conversation."
+          : "Response stopped."
+      );
+    }
+  }, [status, busy, activeTool, messages, agentName]);
+
+  useEffect(() => () => window.clearTimeout(announceTimerRef.current), []);
+
+  const resizeInput = () => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, INPUT_MAX_HEIGHT_PX)}px`;
+  };
+
+  useLayoutEffect(resizeInput, [input]);
+
+  const submit = () => {
+    if (busy) {
+      setInputHint("Wait for the reply to finish, or press Escape to stop it.");
       return;
     }
-    const last = messages[messages.length - 1];
-    if (last && last.from === "agent" && last.id !== announcedIdRef.current) {
-      announcedIdRef.current = last.id;
-      setAnnouncement(`${profile.name} said: ${toSpokenText(last.text)}`);
-    }
-  }, [messages, sending, loadingStage.key, loadingStage.label]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
     if (!input.trim()) {
+      setInputHint("Type a message first.");
       inputRef.current?.focus();
       return;
     }
-    console.log("ChatWidget: sending message to", "/api/resume-query");
-    sendMessage(input);
-    setInput("");
+    if (sendMessage(input)) {
+      setInput("");
+      setInputHint("");
+      followRef.current = true;
+    }
   };
 
-  // Escape closes the chat while focus is anywhere inside it.
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submit();
+  };
+
+  // Enter sends, Shift+Enter adds a new line. Ignore Enter while an IME is
+  // composing so it can confirm the candidate text.
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+      e.preventDefault();
+      submit();
+    }
+  };
+
+  // Escape stops a reply in progress; otherwise it closes the chat.
   useEffect(() => {
     const panel = panelRef.current;
     if (!open || !panel) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.stopPropagation();
-        setOpen(false);
-      }
+      if (e.key !== "Escape") return;
+      e.stopPropagation();
+      if (busy) stop();
+      else setOpen(false);
     };
     panel.addEventListener("keydown", onKeyDown);
     return () => panel.removeEventListener("keydown", onKeyDown);
-  }, [open, setOpen]);
+  }, [open, setOpen, busy, stop]);
+
+  const handleRetry = () => {
+    // The Retry button disappears once the request restarts, so put focus
+    // somewhere stable rather than letting it fall to <body> (2.4.3).
+    inputRef.current?.focus();
+    followRef.current = true;
+    retry();
+  };
 
   return (
     <div data-chat-widget className="pointer-events-none fixed inset-x-3 bottom-3 z-[110] flex justify-end sm:inset-x-auto sm:right-6">
@@ -211,7 +284,7 @@ export default function ChatWidget() {
         >
           <p id="chat-help" className="sr-only">
             Answers come from an AI agent trained on {profile.name}&apos;s experience. New replies are read out
-            automatically. Press Escape to close the chat.
+            automatically when they finish. Press Escape to stop a reply, or to close the chat.
           </p>
 
           <div
@@ -245,7 +318,7 @@ export default function ChatWidget() {
                     <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 motion-safe:animate-ping" />
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
                   </span>
-                  {sending ? loadingStage.label : "Online"}
+                  {busy ? label : "Online"}
                 </p>
               </div>
             </div>
@@ -256,6 +329,8 @@ export default function ChatWidget() {
                 className={ICON_BUTTON_CLASS}
                 style={{ color: "var(--color-text-tertiary)" }}
                 aria-label={minimized ? "Restore chat" : "Minimize chat"}
+                aria-expanded={!minimized}
+                aria-controls="chat-body"
               >
                 {minimized ? <ChevronUp size={16} aria-hidden="true" /> : <Minus size={16} aria-hidden="true" />}
               </button>
@@ -275,135 +350,191 @@ export default function ChatWidget() {
             {announcement}
           </div>
 
-          {!minimized && (
-          <>
-          <div
-            ref={scrollRef}
-            role="region"
-            aria-label="Conversation"
-            // Focusable so keyboard users can scroll back through long replies
-            // (axe: scrollable-region-focusable).
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-            tabIndex={0}
-            className="flex-1 overflow-y-auto px-4 py-3"
-          >
-            {messages.length === 0 && (
-              <p className="font-accent text-sm leading-relaxed" style={{ color: "var(--color-text-tertiary)" }}>
-                This is my AI agent — trained on my real experience, skills and projects. Chat with it
-                like you&apos;re chatting with the actual {profile.name}.
-              </p>
-            )}
-            <ol className="space-y-3" aria-busy={sending}>
-              {messages.map((m) => (
-                <li
-                  key={m.id}
-                  className={`flex items-end gap-2 ${m.from === "visitor" ? "flex-row-reverse" : ""}`}
-                >
-                  {m.from === "visitor" ? <UserAvatar /> : <AgentAvatar />}
-                  <div
-                    className="max-w-[78%] break-words rounded-xl px-3 py-2 text-sm"
-                    style={
-                      m.from === "visitor"
-                        ? {
-                            backgroundColor: "var(--color-bg-accent)",
-                            color: "var(--color-text-on-accent)",
-                          }
-                        : {
-                            backgroundColor: "var(--color-bg-sunken)",
-                            color: "var(--color-text-primary)",
-                          }
-                    }
+          <div id="chat-body" className={`min-h-0 flex-1 flex-col ${minimized ? "hidden" : "flex"}`}>
+            <div
+              ref={scrollRef}
+              onScroll={onConversationScroll}
+              role="region"
+              aria-label="Conversation"
+              // Focusable so keyboard users can scroll back through long replies
+              // (axe: scrollable-region-focusable).
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+              tabIndex={0}
+              className="flex-1 overflow-y-auto px-4 py-3"
+            >
+              {messages.length === 0 && (
+                <p className="font-accent text-sm leading-relaxed" style={{ color: "var(--color-text-tertiary)" }}>
+                  This is my AI agent — trained on my real experience, skills and projects. Chat with it
+                  like you&apos;re chatting with the actual {profile.name}.
+                </p>
+              )}
+              <ol className="space-y-3">
+                {messages.map((m) => (
+                  <li
+                    key={m.id}
+                    className={`flex items-end gap-2 ${m.from === "visitor" ? "flex-row-reverse" : ""}`}
                   >
-                    {/* Who said it, for screen readers — the bubble side and colour carry it visually (1.3.1). */}
-                    <span className="sr-only">{m.from === "visitor" ? "You said: " : `${profile.name} said: `}</span>
-                    {m.from === "agent" ? <FormattedMessage text={m.text} /> : m.text}
-                  </div>
-                </li>
-              ))}
-            </ol>
-            {sending && (
-              <div className="mt-3 flex items-end gap-2" aria-hidden="true">
-                <AgentAvatar />
-                {loadingStage.key === "thinking" ? (
-                  <div
-                    className="flex w-fit items-center gap-1 rounded-xl px-3 py-2.5"
-                    style={{ backgroundColor: "var(--color-bg-sunken)" }}
-                  >
-                    <span
-                      className="h-1.5 w-1.5 rounded-full motion-safe:animate-bounce [animation-delay:-0.3s]"
-                      style={{ backgroundColor: "var(--color-text-tertiary)" }}
-                    />
-                    <span
-                      className="h-1.5 w-1.5 rounded-full motion-safe:animate-bounce [animation-delay:-0.15s]"
-                      style={{ backgroundColor: "var(--color-text-tertiary)" }}
-                    />
-                    <span
-                      className="h-1.5 w-1.5 rounded-full motion-safe:animate-bounce"
-                      style={{ backgroundColor: "var(--color-text-tertiary)" }}
-                    />
-                  </div>
-                ) : (
+                    {m.from === "visitor" ? <UserAvatar /> : <AgentAvatar />}
+                    <div
+                      // A reply that is still arriving is marked busy so screen
+                      // readers don't read it half-written; the live region
+                      // reads the finished reply instead.
+                      aria-busy={m.streaming || undefined}
+                      className="max-w-[78%] break-words rounded-xl px-3 py-2 text-sm"
+                      style={
+                        m.from === "visitor"
+                          ? {
+                              backgroundColor: "var(--color-bg-accent)",
+                              color: "var(--color-text-on-accent)",
+                            }
+                          : {
+                              backgroundColor: "var(--color-bg-sunken)",
+                              color: "var(--color-text-primary)",
+                            }
+                      }
+                    >
+                      {/* Who said it, for screen readers — the bubble side and colour carry it visually (1.3.1). */}
+                      <span className="sr-only">{m.from === "visitor" ? "You said: " : `${profile.name} said: `}</span>
+                      {m.from === "agent" ? <FormattedMessage text={m.text} /> : <span className="whitespace-pre-wrap">{m.text}</span>}
+                      {m.streaming && (
+                        <span
+                          aria-hidden="true"
+                          className="ml-0.5 inline-block h-3.5 w-1.5 translate-y-0.5 rounded-sm motion-safe:animate-pulse"
+                          style={{ backgroundColor: "var(--color-text-tertiary)" }}
+                        />
+                      )}
+                      {m.stopped && (
+                        <p className="mt-2 text-xs italic" style={{ color: "var(--color-text-tertiary)" }}>
+                          {m.text ? "Response stopped." : "Response stopped before any reply arrived."}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              {status === "waiting" && (
+                <div className="mt-3 flex items-end gap-2" aria-hidden="true">
+                  <AgentAvatar />
                   <div
                     className="flex w-fit items-center gap-2 rounded-xl px-3 py-2.5"
                     style={{ backgroundColor: "var(--color-bg-sunken)" }}
                   >
-                    <span className="relative flex h-4 w-4 shrink-0 items-center justify-center">
-                      <LoadingIcon size={13} style={{ color: "var(--color-text-accent)" }} />
-                      <Loader2
-                        size={20}
-                        className="absolute motion-safe:animate-spin"
-                        style={{ color: "var(--color-text-accent)", opacity: 0.35 }}
-                      />
+                    <span className="flex items-center gap-1">
+                      {["-0.3s", "-0.15s", "0s"].map((delay) => (
+                        <span
+                          key={delay}
+                          className="h-1.5 w-1.5 rounded-full motion-safe:animate-bounce"
+                          style={{ backgroundColor: "var(--color-text-tertiary)", animationDelay: delay }}
+                        />
+                      ))}
                     </span>
+                    {/* Text, not only the animation, so the state is clear with motion off. */}
                     <span className="text-xs font-medium" style={{ color: "var(--color-text-tertiary)" }}>
-                      {loadingStage.label}
+                      {label}
                     </span>
                   </div>
-                )}
-              </div>
-            )}
-          </div>
+                </div>
+              )}
+            </div>
 
-          <form
-            onSubmit={handleSubmit}
-            className="flex items-center gap-2 border-t p-3"
-            style={{ borderColor: "var(--color-border-subtle)" }}
-          >
-            <label htmlFor="chat-input" className="sr-only">
-              Message {profile.name}&apos;s AI
-            </label>
-            <input
-              id="chat-input"
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type a message…"
-              autoComplete="off"
-              enterKeyHint="send"
-              className="min-w-0 flex-1 rounded-lg border px-3 py-2 text-sm placeholder-[var(--color-text-tertiary)]"
-              style={{
-                backgroundColor: "var(--color-bg-sunken)",
-                borderColor: "var(--color-border-input)",
-                color: "var(--color-text-primary)",
-              }}
-            />
-            <button
-              type="submit"
-              aria-label="Send message"
-              className="js-btn flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors duration-150"
-              data-variant="primary"
-              style={{
-                backgroundColor: "var(--color-bg-accent)",
-                color: "var(--color-text-on-accent)",
-                borderColor: "var(--color-bg-accent)",
-              }}
+            {/* Always rendered, so the alert is announced reliably when filled (4.1.3). */}
+            <div role="alert" className="px-3">
+              {error && (
+                <div
+                  className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border px-3 py-2 text-sm"
+                  style={{
+                    borderColor: "var(--color-status-error)",
+                    color: "var(--color-text-primary)",
+                    backgroundColor: "var(--color-bg-raised)",
+                  }}
+                >
+                  <AlertCircle size={16} aria-hidden="true" style={{ color: "var(--color-status-error)" }} />
+                  <p className="min-w-0 flex-1">
+                    <span className="font-semibold" style={{ color: "var(--color-status-error)" }}>
+                      Error:
+                    </span>{" "}
+                    {error}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleRetry}
+                    className="js-btn min-h-[2rem] rounded-lg border px-3 text-sm font-semibold"
+                    data-variant="outline"
+                    style={{ borderColor: "var(--color-border-input)", color: "var(--color-text-primary)" }}
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <form
+              onSubmit={handleSubmit}
+              className="flex items-end gap-2 border-t p-3"
+              style={{ borderColor: "var(--color-border-subtle)" }}
             >
-              <Send size={15} aria-hidden="true" />
-            </button>
-          </form>
-          </>
-          )}
+              <label htmlFor="chat-input" className="sr-only">
+                Message {agentName}
+              </label>
+              <div className="min-w-0 flex-1">
+                <textarea
+                  id="chat-input"
+                  ref={inputRef}
+                  rows={1}
+                  value={input}
+                  onChange={(e) => {
+                    setInput(e.target.value);
+                    if (inputHint) setInputHint("");
+                  }}
+                  onKeyDown={handleInputKeyDown}
+                  placeholder="Type a message…"
+                  autoComplete="off"
+                  enterKeyHint="send"
+                  aria-describedby="chat-input-keys chat-input-hint"
+                  className="block w-full resize-none rounded-lg border px-3 py-2 text-sm leading-5 placeholder-[var(--color-text-tertiary)]"
+                  style={{
+                    backgroundColor: "var(--color-bg-sunken)",
+                    borderColor: "var(--color-border-input)",
+                    color: "var(--color-text-primary)",
+                    maxHeight: INPUT_MAX_HEIGHT_PX,
+                  }}
+                />
+                <p id="chat-input-keys" className="sr-only">
+                  Enter sends. Shift plus Enter adds a new line.
+                </p>
+                <p
+                  id="chat-input-hint"
+                  aria-live="polite"
+                  className="text-xs [&:not(:empty)]:mt-1"
+                  style={{ color: "var(--color-text-tertiary)" }}
+                >
+                  {inputHint}
+                </p>
+              </div>
+              {/* One button that switches between Send and Stop, so it keeps
+                  its place in the tab order and focus isn't lost mid-reply.
+                  Always type="button": if it flipped to "submit" while handling
+                  the Stop click, the browser would then submit the form too. */}
+              <button
+                type="button"
+                onClick={busy ? stop : submit}
+                aria-label={busy ? "Stop response" : "Send message"}
+                className="js-btn flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors duration-150"
+                data-variant="primary"
+                style={{
+                  backgroundColor: "var(--color-bg-accent)",
+                  color: "var(--color-text-on-accent)",
+                  borderColor: "var(--color-bg-accent)",
+                }}
+              >
+                {busy ? (
+                  <Square size={13} fill="currentColor" aria-hidden="true" />
+                ) : (
+                  <Send size={15} aria-hidden="true" />
+                )}
+              </button>
+            </form>
+          </div>
         </section>
       )}
 

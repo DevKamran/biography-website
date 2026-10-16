@@ -50,8 +50,15 @@ uvicorn main:app --reload --port 8000
 not part of the request path, and the Docker `CMD` does not run it.
 Re-ingesting with the same `--document` replaces that document's chunks.
 
-There is no test suite in either app. To smoke-test the agent, run
-`curl -X POST localhost:8000/query -H 'Content-Type: application/json' -d '{"question":"..."}'`.
+The agent has no tests. To smoke-test it, run
+`curl -X POST localhost:8000/query -H 'Content-Type: application/json' -d '{"question":"..."}'`
+(or `/query/stream` with `curl -N` to see the streamed events).
+
+The web app has a Playwright + axe accessibility suite: `npm run test:a11y`
+in `apps/web` (`e2e/a11y.spec.ts`). It starts its own `next dev` on :3100,
+with the chat agent mocked in the page, so no agent needs to be running.
+`node scripts/check-contrast.mjs` checks the colour tokens. What the chat
+does for WCAG 2.2 AA, and how it's tested, is in `apps/web/ACCESSIBILITY.md`.
 
 Env: `cp apps/web/.env.local.example apps/web/.env.local` and fill in
 `RESUME_RAG_API_URL`, `BLOG_ADMIN_TOKEN` (must equal the agent's),
@@ -62,9 +69,15 @@ Env: `cp apps/web/.env.local.example apps/web/.env.local` and fill in
 ### Chat
 
 `ChatWidget` → `useResumeChat` (`apps/web/lib/use-resume-chat.ts`) →
-`POST /api/resume-query`. The route forwards `{question, history}` to the
-agent's `POST /query`. The client keeps the conversation history and sends
-it on each request; the agent is stateless.
+`POST /api/resume-query/stream`, which pipes the agent's
+`POST /query/stream` (NDJSON events: `tool`, `delta`, then `done` or `error`)
+to the browser. If that returns 404, the hook falls back to the one-shot
+`POST /api/resume-query` → `/query`. The Stop button aborts the fetch; the
+abort reaches the agent, which cancels the run. The client keeps the
+conversation history and sends it on each request; the agent is stateless.
+The widget's screen-reader announcements are deliberate (one "thinking"
+notice, then the whole reply once it's complete, never piece by piece), so
+see `apps/web/ACCESSIBILITY.md` before changing them.
 
 The agent (`apps/agent/rag/agent.py`) is a LlamaIndex `FunctionAgent`, built
 once in FastAPI's lifespan. Its system prompt lists every tool with usage
