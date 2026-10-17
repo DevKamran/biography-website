@@ -105,11 +105,15 @@ function toSpokenText(text: string) {
 }
 
 const ICON_BUTTON_CLASS =
-  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:opacity-70";
+  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:bg-[var(--color-bg-sunken)]";
 
 // How close (px) to the bottom still counts as "following" the conversation.
 const STICKY_SCROLL_PX = 48;
 const INPUT_MAX_HEIGHT_PX = 128;
+// After a reply finishes on its own, Escape is ignored for this long: someone
+// pressing Escape to stop a reply that has just ended means "stop", not
+// "close the chat" (closing would also send their next keystrokes elsewhere).
+const ESCAPE_GRACE_MS = 1500;
 
 export default function ChatWidget() {
   const { open, setOpen } = useChatWidget();
@@ -130,11 +134,15 @@ export default function ChatWidget() {
   const prevStatusRef = useRef<ChatStatus>(status);
   const announceTimerRef = useRef<number>();
   const prevToolRef = useRef<string | null>(null);
+  const replyEndedAtRef = useRef(0);
 
   const label = progressLabel(status, activeTool);
   const agentName = `${profile.name}'s AI`;
 
   useEffect(() => {
+    // A screen reader reads the status region as part of the dialog when it
+    // opens, so leftover text ("…is thinking") would be announced as if live.
+    setAnnouncement("");
     if (open) {
       openerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       // Reset so the widget always opens in its normal state.
@@ -188,8 +196,13 @@ export default function ChatWidget() {
     } else if (busy && activeTool && activeTool !== prevTool && TOOL_LABELS[activeTool]) {
       announce(TOOL_LABELS[activeTool]);
     } else if (status === "idle" && (prev === "waiting" || prev === "streaming")) {
+      replyEndedAtRef.current = Date.now();
       const last = messages[messages.length - 1];
       if (last?.from === "agent") announce(`${profile.name} said: ${toSpokenText(last.text)}`);
+    } else if (status === "error" && prev !== "error") {
+      // The role="alert" box announces the error; don't leave "thinking" behind.
+      window.clearTimeout(announceTimerRef.current);
+      setAnnouncement("");
     } else if (status === "stopped" && prev !== "stopped") {
       const last = messages[messages.length - 1];
       announce(
@@ -242,7 +255,7 @@ export default function ChatWidget() {
     }
   };
 
-  // Escape stops a reply in progress; otherwise it closes the chat.
+  // Escape stops a reply in progress; otherwise it closes the chat (see ESCAPE_GRACE_MS).
   useEffect(() => {
     const panel = panelRef.current;
     if (!open || !panel) return;
@@ -250,7 +263,7 @@ export default function ChatWidget() {
       if (e.key !== "Escape") return;
       e.stopPropagation();
       if (busy) stop();
-      else setOpen(false);
+      else if (Date.now() - replyEndedAtRef.current >= ESCAPE_GRACE_MS) setOpen(false);
     };
     panel.addEventListener("keydown", onKeyDown);
     return () => panel.removeEventListener("keydown", onKeyDown);
@@ -267,6 +280,9 @@ export default function ChatWidget() {
   return (
     <div data-chat-widget className="pointer-events-none fixed inset-x-3 bottom-3 z-[110] flex justify-end sm:inset-x-auto sm:right-6">
       {open && (
+        // On short viewports (400% zoom, landscape phones) the panel takes the
+        // full height and the chrome tightens, so the conversation keeps
+        // several readable lines instead of ~1 (WCAG 1.4.10 / 1.4.4).
         <section
           id="chat-panel"
           ref={panelRef}
@@ -275,7 +291,7 @@ export default function ChatWidget() {
           aria-labelledby="chat-title"
           aria-describedby="chat-help"
           className={`pointer-events-auto mb-2 flex max-h-[calc(100dvh-1.5rem)] w-full flex-col overflow-hidden rounded-2xl border shadow-2xl sm:w-[26rem] md:w-[32rem] ${
-            minimized ? "h-auto" : "h-[75dvh] sm:h-[44rem] md:h-[50rem]"
+            minimized ? "h-auto" : "h-[75dvh] sm:h-[44rem] md:h-[50rem] [@media(max-height:500px)]:!h-[calc(100dvh-1.5rem)]"
           }`}
           style={{
             backgroundColor: "var(--color-bg-raised)",
@@ -288,7 +304,7 @@ export default function ChatWidget() {
           </p>
 
           <div
-            className="flex items-center justify-between border-b px-4 py-3"
+            className="flex items-center justify-between border-b px-4 py-3 [@media(max-height:500px)]:py-1.5"
             style={{ borderColor: "var(--color-border-subtle)" }}
           >
             <div className="flex min-w-0 items-center gap-3">
@@ -311,7 +327,7 @@ export default function ChatWidget() {
                 {/* Visual only: the live region below speaks this to screen readers. */}
                 <p
                   aria-hidden="true"
-                  className="flex items-center gap-1.5 font-mono-label text-[11px]"
+                  className="flex items-center gap-1.5 font-mono-label text-[11px] [@media(max-height:500px)]:!hidden"
                   style={{ color: "var(--color-text-tertiary)" }}
                 >
                   <span className="relative flex h-1.5 w-1.5 shrink-0">
@@ -360,7 +376,7 @@ export default function ChatWidget() {
               // (axe: scrollable-region-focusable).
               // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
               tabIndex={0}
-              className="flex-1 overflow-y-auto px-4 py-3"
+              className="flex-1 overflow-y-auto px-4 py-3 [@media(max-height:500px)]:py-2"
             >
               {messages.length === 0 && (
                 <p className="font-accent text-sm leading-relaxed" style={{ color: "var(--color-text-tertiary)" }}>
@@ -470,7 +486,7 @@ export default function ChatWidget() {
 
             <form
               onSubmit={handleSubmit}
-              className="flex items-end gap-2 border-t p-3"
+              className="flex items-end gap-2 border-t p-3 [@media(max-height:500px)]:p-2"
               style={{ borderColor: "var(--color-border-subtle)" }}
             >
               <label htmlFor="chat-input" className="sr-only">

@@ -145,7 +145,6 @@ export default function Hero() {
             <span
               key={tag}
               className="js-tag inline-flex h-8 items-center gap-2 rounded-full border px-4 font-mono-label text-xs transition-colors sm:h-9 sm:text-sm"
-              style={{ borderColor: "var(--color-border-default)", color: "var(--color-text-secondary)" }}
             >
               <TagLogo tag={tag} />
               {tag}

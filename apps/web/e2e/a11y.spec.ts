@@ -8,6 +8,9 @@ async function gotoLanding(page: Page, theme: "dark" | "light" = "dark") {
   await page.goto("/");
   // Wait for the preloader to finish so axe sees the real page.
   await expect(page.locator("html.preload-lock")).toHaveCount(0, { timeout: 15_000 });
+  // The saved theme is applied by Header's effect after hydration. Without
+  // this wait, "light" runs could measure the default dark tokens.
+  await expect(page.locator(`html[data-theme="${theme}"]`)).toHaveCount(1, { timeout: 30_000 });
   // The saved theme is applied after hydration with a colour transition; let
   // finite CSS transitions/animations settle so axe measures the final colours.
   await page.waitForFunction(() =>
@@ -33,6 +36,20 @@ for (const theme of ["dark", "light"] as const) {
     await gotoLanding(page, theme);
     await page.getByRole("button", { name: "Chat with my AI" }).click();
     await expectNoAxeViolations(page, "#chat-panel");
+  });
+}
+
+for (const theme of ["dark", "light"] as const) {
+  test(`skill tags keep text contrast on hover (${theme})`, async ({ page }) => {
+    await gotoLanding(page, theme);
+    const tag = page.locator(".js-tag").first();
+    await tag.hover();
+    await page.waitForTimeout(300);
+    const { color, bg } = await tag.evaluate((el) => ({ color: getComputedStyle(el).color, bg: getComputedStyle(el).backgroundColor }));
+    expect.soft(bg, "hover background").toBe(theme === "light" ? "rgb(8, 114, 156)" : "rgb(34, 184, 232)");
+    expect.soft(color, "hover text").toBe(theme === "light" ? "rgb(255, 255, 255)" : "rgb(4, 34, 44)");
+    const { violations } = await new AxeBuilder({ page }).withRules(["color-contrast"]).include(".js-tag").analyze();
+    expect(violations.flatMap((v) => v.nodes.map((n) => n.any[0]?.message))).toEqual([]);
   });
 }
 
@@ -236,6 +253,24 @@ test.describe("chat widget — keyboard and screen reader", () => {
     await expect(dialog).toHaveCount(0);
   });
 
+  test("Escape just after a reply finishes doesn't close the chat", async ({ page }) => {
+    // Found in a real browser: pressing Escape to stop a reply that had just
+    // ended closed the chat, and the next keystrokes landed on the launcher.
+    await mockChat(page, [{ kind: "stream", events: STREAMED, delayMs: 100 }]);
+    await gotoLanding(page);
+    const { dialog, input } = await ask(page);
+    await expect(dialog.getByRole("button", { name: "Send message" })).toBeVisible();
+    await page.keyboard.press("Escape");
+    await page.keyboard.type("Where are you based?");
+    await expect(dialog).toBeVisible();
+    await expect(input).toHaveValue("Where are you based?");
+
+    // Once the grace period is over, Escape closes as usual.
+    await page.waitForTimeout(1600);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+  });
+
   test("Stop button works by keyboard and keeps focus in place", async ({ page }) => {
     await mockChat(page, [{ kind: "stream", events: STREAMED, delayMs: 800 }, OK]);
     await gotoLanding(page);
@@ -265,6 +300,8 @@ test.describe("chat widget — keyboard and screen reader", () => {
 
     const alert = dialog.getByRole("alert");
     await expect(alert).toContainText("Error: The assistant is unavailable right now. Try again in a moment.");
+    // Found with Orca: leftover "thinking" text was re-read when the dialog reopened.
+    await expect(dialog.getByRole("status")).toBeEmpty();
     await expect(dialog.getByRole("listitem").filter({ hasText: "You said:" })).toHaveCount(1);
     await expect(input).toBeFocused();
 
@@ -315,7 +352,7 @@ test.describe("chat widget — keyboard and screen reader", () => {
 test.describe("chat widget — visual: contrast, reflow, zoom, motion, targets", () => {
   for (const theme of ["dark", "light"] as const) {
     test(`no axe violations while waiting, streaming, stopped and errored (${theme})`, async ({ page }) => {
-      await mockChat(page, [{ kind: "stream", events: STREAMED, delayMs: 700 }, { kind: "status", status: 500 }]);
+      await mockChat(page, [{ kind: "stream", events: STREAMED, delayMs: 2500 }, { kind: "status", status: 500 }]);
       await gotoLanding(page, theme);
       const { dialog } = await ask(page);
 
@@ -329,6 +366,23 @@ test.describe("chat widget — visual: contrast, reflow, zoom, motion, targets",
       await page.keyboard.type("Again");
       await page.keyboard.press("Enter");
       await expect(dialog.getByRole("alert")).toContainText("Error:");
+      await expectNoAxeViolations(page, "#chat-panel");
+    });
+  }
+
+  for (const theme of ["dark", "light"] as const) {
+    test(`hover states keep contrast: links in replies and icon buttons (${theme})`, async ({ page }) => {
+      // Found by calculation: links faded to 80% on hover fell to 3.31:1 in the light theme.
+      const answer = "Here you go: [Download my resume](/api/resume-download).";
+      await mockChat(page, [{ kind: "stream", events: [{ type: "done", answer }], delayMs: 50 }]);
+      await gotoLanding(page, theme);
+      const { dialog } = await ask(page);
+      const link = convo(dialog).getByRole("link", { name: /Download my resume/ });
+      await link.hover();
+      await page.waitForTimeout(300);
+      await expectNoAxeViolations(page, "#chat-panel");
+      await dialog.getByRole("button", { name: "Close chat" }).hover();
+      await page.waitForTimeout(300);
       await expectNoAxeViolations(page, "#chat-panel");
     });
   }
@@ -348,6 +402,10 @@ test.describe("chat widget — visual: contrast, reflow, zoom, motion, targets",
       expect(box.y).toBeGreaterThanOrEqual(0);
       expect(box.y + box.height).toBeLessThanOrEqual(size.height);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(size.width);
+      // Enough of the conversation stays readable, not just reachable: at 400%
+      // the header and input bar used to leave it ~1 line (26px) tall.
+      const convoBox = (await dialog.getByRole("region", { name: "Conversation" }).boundingBox())!;
+      expect(convoBox.height).toBeGreaterThanOrEqual(60);
       for (const control of [dialog.getByRole("textbox"), dialog.getByRole("button", { name: "Send message" }), dialog.getByRole("button", { name: "Close chat" })]) {
         await expect(control).toBeInViewport({ ratio: 1 });
       }
