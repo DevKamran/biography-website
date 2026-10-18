@@ -155,11 +155,12 @@ export default function Hero() {
 
       <a
         href="#trust"
-        className="absolute bottom-10 right-8 z-[3] hidden items-center gap-2 font-mono-label text-sm transition-opacity hover:opacity-70 hero:inline-flex"
-        style={{ color: "white" }}
+        className="absolute bottom-10 right-8 z-[3] hidden items-center gap-2 font-mono-label text-sm underline-offset-4 hover:underline hero:inline-flex"
+        // Theme tokens: a fixed white was invisible on the light theme (WCAG 1.4.3).
+        style={{ color: "var(--color-text-primary)" }}
       >
         Scroll for more
-        <ArrowDown ref={arrowFloatRef} color="#22b8e8" size={20} />
+        <ArrowDown ref={arrowFloatRef} color="var(--color-icon-accent)" size={20} aria-hidden="true" />
       </a>
     </section>
   );

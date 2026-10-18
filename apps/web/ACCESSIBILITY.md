@@ -59,6 +59,13 @@ Replies stream in from the agent and can be stopped at any point.
 - `node scripts/check-contrast.mjs`: computes ratios for the actual colour
   tokens in `app/globals.css`, both themes, and fails on anything below AA.
 - The full suite was run twice back to back with no failures.
+- Light theme is really tested: the helper waits for `html[data-theme="light"]` before
+  measuring. Before that wait was added, "light" runs were silently measuring the
+  default dark colours. Fixing that exposed, and these fixes resolved: (1) the header
+  overwrote the saved theme with "dark" on load, so light mode was lost on reload in
+  development; (2) the hero's "Scroll for more" link was fixed white text, invisible on
+  the light background; (3) skill tags kept their grey text on the blue hover
+  background (1.37:1), because an inline style overrode the hover colour.
 
 **End to end against the real agent** (local FastAPI + Gemini, no mocks):
 
@@ -78,7 +85,7 @@ Replies stream in from the agent and can be stopped at any point.
 | Same, plus touch targets | VoiceOver iOS / TalkBack Android | _pending_ |
 | Browser zoom 200% and 400% with a real streamed reply | Chrome on Linux, 1920×800 window, 2026-10-17 | **Pass.** 200% → 960×400 CSS px: panel 512×376, no horizontal scroll, all controls fully visible. 400% → 480×200 CSS px (shorter than the WCAG 320×256 case): no horizontal scroll, Close/input/Send-Stop fully visible while waiting, streaming and done. **Found and fixed:** at 400% the conversation area was only 26px (about one line); after the short-viewport layout it is 72px (about four lines). |
 | OS large text | Chrome, Safari | _pending_ |
-| OS "Reduce motion" on | macOS / Windows | _pending_ |
+| OS "Reduce motion" on | GNOME "Reduce animation" + Chrome (Linux, Wayland), 2026-10-17 | **Inconclusive:** Chrome did not report `prefers-reduced-motion: reduce` after the GNOME setting changed, so the chat animated as it should when no preference is reported. Covered instead by the automated test with the browser's reduced-motion emulation. Still to check on macOS / Windows. |
 
 ## Known limits
 
