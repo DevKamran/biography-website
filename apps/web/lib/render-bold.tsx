@@ -17,7 +17,7 @@ export function renderBold(text: string): ReactNode[] {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="underline underline-offset-2 decoration-1 transition-colors duration-150 hover:opacity-80"
+          className="rich-link"
           style={{ color: "var(--color-text-accent)" }}
         >
           {label}

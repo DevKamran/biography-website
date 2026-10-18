@@ -65,9 +65,11 @@ export default function Header() {
     return () => ctx.revert();
   }, []);
 
+  // Only apply the theme here. Saving it happens on the toggle click: saving
+  // from this effect wrote the default "dark" over the stored choice on mount
+  // (and in Strict Mode the re-run then read that back), losing "light".
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    window.localStorage.setItem("theme", theme);
   }, [theme]);
 
   useEffect(() => {
@@ -148,7 +150,15 @@ export default function Header() {
             role="switch"
             aria-checked={theme === "light"}
             aria-label="Light theme"
-            onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
+            onClick={() => {
+              const next = theme === "dark" ? "light" : "dark";
+              setTheme(next);
+              try {
+                window.localStorage.setItem("theme", next);
+              } catch {
+                // Storage can be unavailable (private mode); the theme still applies.
+              }
+            }}
           >
             {theme === "dark" ? <Moon size={16} aria-hidden="true" /> : <Sun size={16} aria-hidden="true" />}
           </IconButton>

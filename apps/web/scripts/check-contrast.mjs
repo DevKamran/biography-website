@@ -20,6 +20,7 @@ const PAIRS = [
   ["color-text-primary", "color-bg-raised", 4.5, "message/header text"],
   ["color-text-primary", "color-bg-sunken", 4.5, "agent bubble + input text"],
   ["color-text-on-accent", "color-bg-accent", 4.5, "visitor bubble, Send button"],
+  ["color-text-on-accent", "color-bg-accent-hover", 4.5, "hovered Send / launcher button"],
   ["color-text-secondary", "color-bg-raised", 4.5, "intro / status text"],
   ["color-text-secondary", "color-bg-sunken", 4.5, "stopped note, placeholder"],
   ["color-text-tertiary", "color-bg-raised", 4.5, "empty-state intro, status line"],
